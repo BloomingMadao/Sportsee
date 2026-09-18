@@ -1,39 +1,16 @@
-import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router-dom";
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import './index.css';
-import Root from './routes/root';
-import ErrorPage from './error-page';
-import Connexion from './pages/Connexion';
-import ConnexionForm, { connexionAction } from './components/ConnexionForm';
-import Dashboard from './pages/Dashboard';
-// import App from './App.jsx'
-
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Root />,
-    errorElement: <ErrorPage />,
-    children: [
-      {
-        index: true,          // route par défaut sur "/"
-        element: <Connexion />,
-        action: connexionAction,  // action pour gérer la soumission du formulaire
-      },
-      {
-        path: "dashboard",    // accessible sur "/dashboard"
-        element: <Dashboard />,
-      },
-    ],
-  },
-]);
+import Connexion from './pages/Connexion'
 
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <RouterProvider router ={router} />
+    <Router>
+      <Routes>
+          <Route path='/' element={<Connexion/>}/>
+      </Routes>
+    </Router>
   </StrictMode>,
 )
