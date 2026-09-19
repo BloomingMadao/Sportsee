@@ -1,43 +1,53 @@
+import styles from './ConnexionForm.module.css'
 
-// export async function connexionAction({ request }) {
-//     const formData = await request.formData();
-//     const username = formData.get("username");
-//     const password = formData.get("password");
+function ConnexionForm() {
+  // Temporaire : empêche le comportement par défaut du navigateur.
+  // La vraie connexion sera branchée à l'étape 4.
+  function handleSubmit(event) {
+    event.preventDefault()
+  }
 
-//     const response = await fetch("http://localhost:8000/api/login", {
-//         method: "POST",
-//         headers: {
-//             "Content-Type": "application/json"
-//         },
-//         body: JSON.stringify({ username, password })
-//     });
+  return (
+    <form className={styles.form} onSubmit={handleSubmit}>
+      <h2 className={styles.title}>Se connecter</h2>
 
-//     if (!response.ok) {
-//         throw new Error("Erreur lors de la connexion");
-//     }
+      <div className={styles.field}>
+        {/* En JSX : htmlFor au lieu de for, className au lieu de class */}
+        <label htmlFor="username" className={styles.label}>
+          Nom d'utilisateur
+        </label>
+        <input
+          id="username"
+          name="username"
+          type="text"
+          autoComplete="username"
+          required
+          className={styles.input}
+        />
+      </div>
 
-//     const data = await response.json();
-//     console.log("Connexion réussie :", data);
+      <div className={styles.field}>
+        <label htmlFor="password" className={styles.label}>
+          Mot de passe
+        </label>
+        <input
+          id="password"
+          name="password"
+          type="password"
+          autoComplete="current-password"
+          required
+          className={styles.input}
+        />
+      </div>
 
-//     return redirect("/dashboard");
-// }
+      <button type="submit" className={styles.submit}>
+        Se connecter
+      </button>
 
-function ConnexionForm(){
-    return (
-        // <Form method="post" className="connexion-form">
-        //     <div className="form-group">
-        //         <label htmlFor="username">Nom d'utilisateur</label>
-        //         <input type="text" name="username" id="username" required />
-        //     </div>
-        //     <div className="form-group">
-        //         <label htmlFor="password">Mot de passe</label>
-        //         <input type="password" name="password" id="password" required />
-        //     </div>
-        //     <button type="submit">Se connecter</button>
-        // </Form>
-
-        <h1>Test</h1>
-    )
+      {/* Aucun endpoint n'existe : un simple texte plutôt qu'un faux lien */}
+      <p className={styles.forgot}>Mot de passe oublié ?</p>
+    </form>
+  )
 }
 
 export default ConnexionForm

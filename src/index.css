@@ -1,3 +1,56 @@
+:root {
+  /* Couleurs issues de Figma */
+  --color-bg: #f2f3ff;
+  --color-surface: #ffffff;
+  --color-primary: #0b23f4;
+  --color-primary-light: #b6bdfc;
+  --color-accent: #f4320b;
+  --color-accent-light: #fcc1b6;
+  --color-text: #111111;
+  --color-text-muted: #707070;
+
+  /* Formes */
+  --radius-md: 10px;
+  --radius-lg: 20px;
+  --radius-pill: 999px;
+  --shadow-card: 0 2px 30px rgba(11, 35, 244, 0.05);
+
+  /* Largeur du contenu dans la maquette (écran de 1440px) */
+  --content-width: 1140px;
+  --page-padding: 32px;
+
+  font-family: 'Inter', system-ui, sans-serif;
+  color: var(--color-text);
+  background-color: var(--color-bg);
+}
+
+/* width/height incluent padding et bordure : les tailles deviennent prévisibles */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
+  /* Desktop uniquement : en dessous de 1024px, on scrolle plutôt que de casser la mise en page */
+  min-width: 1024px;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+/* Par défaut, les champs et boutons n'héritent pas de la police de la page */
+button,
+input {
+  font: inherit;
+}
+
+img {
+  display: block;
+  max-width: 100%;
 }

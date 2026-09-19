@@ -1,16 +1,26 @@
 import { Link, NavLink } from 'react-router-dom'
+import Logo from '../Logo'
+import styles from './Header.module.css'
 
 function Header() {
   return (
-    <header>
-      <Link to="/dashboard">SPORTSEE</Link>
+    <header className={styles.header}>
+      <Link to="/dashboard">
+        <Logo />
+      </Link>
 
-      <nav>
-        <NavLink to="/dashboard">Dashboard</NavLink>
-        <NavLink to="/profil">Mon profil</NavLink>
-        {/* Un bouton, pas un lien : se déconnecter est une action, pas une navigation.
-            On le branchera à l'étape 4. */}
-        <button type="button">Se déconnecter</button>
+      <nav className={styles.nav}>
+        <NavLink to="/dashboard" className={styles.link}>
+          Dashboard
+        </NavLink>
+        <NavLink to="/profil" className={styles.link}>
+          Mon profil
+        </NavLink>
+        {/* Trait décoratif : aria-hidden le masque aux lecteurs d'écran */}
+        <span className={styles.separator} aria-hidden="true" />
+        <button type="button" className={styles.logout}>
+          Se déconnecter
+        </button>
       </nav>
     </header>
   )
