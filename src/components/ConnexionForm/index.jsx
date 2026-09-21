@@ -14,7 +14,7 @@ function ConnexionForm() {
       <div className={styles.field}>
         {/* En JSX : htmlFor au lieu de for, className au lieu de class */}
         <label htmlFor="username" className={styles.label}>
-          Nom d'utilisateur
+          Identifiant
         </label>
         <input
           id="username"

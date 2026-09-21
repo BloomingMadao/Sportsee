@@ -10,10 +10,20 @@ function Header() {
       </Link>
 
       <nav className={styles.nav}>
-        <NavLink to="/dashboard" className={styles.link}>
+        <NavLink
+          to="/dashboard"
+          className={({ isActive }) =>
+            isActive ? `${styles.link} ${styles.active}` : styles.link
+          }
+        >
           Dashboard
         </NavLink>
-        <NavLink to="/profil" className={styles.link}>
+        <NavLink
+          to="/profil"
+          className={({ isActive }) =>
+            isActive ? `${styles.link} ${styles.active}` : styles.link
+          }
+        >
           Mon profil
         </NavLink>
         {/* Trait décoratif : aria-hidden le masque aux lecteurs d'écran */}
