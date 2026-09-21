@@ -27,6 +27,10 @@
   color: var(--color-primary);
 }
 
+.active {
+  color: var(--color-primary);
+  font-weight: 500;
+}
 .separator {
   width: 1px;
   height: 20px;
