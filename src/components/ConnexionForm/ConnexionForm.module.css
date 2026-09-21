@@ -57,3 +57,20 @@
   font-size: 16px;
   font-weight: 500;
 }
+
+/* Couleurs d'accent de la charte Figma */
+.error {
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  background-color: var(--color-accent-light);
+  color: var(--color-accent);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* Le curseur "interdit" et l'opacité signalent que le bouton est inactif */
+.submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
