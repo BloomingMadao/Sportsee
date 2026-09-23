@@ -2,6 +2,7 @@ import { USE_MOCK } from '../config'
 import { apiRequest } from './apiClient'
 import { mockUserInfo, mockUserActivity } from './mock/mockApi'
 import { formatUserInfo } from './adapters/userAdapter'
+import { formatActivity } from './adapters/activityAdapter'
 
 export async function getUserInfo(token) {
   const raw = USE_MOCK
@@ -12,12 +13,13 @@ export async function getUserInfo(token) {
   return formatUserInfo(raw)
 }
 
-export function getUserActivity(token, startWeek, endWeek) {
-  if (USE_MOCK) return mockUserActivity(token, startWeek, endWeek)
+export async function getUserActivity(token, startWeek, endWeek) {
+  if (USE_MOCK) {
+    return formatActivity(await mockUserActivity(token, startWeek, endWeek))
+  }
 
-  // URLSearchParams construit et encode la query string proprement.
-  // Bien plus sûr qu'une concaténation à la main.
   const query = new URLSearchParams({ startWeek, endWeek })
+  const raw = await apiRequest(`/api/user-activity?${query}`, { token })
 
-  return apiRequest(`/api/user-activity?${query}`, { token })
+  return formatActivity(raw)
 }

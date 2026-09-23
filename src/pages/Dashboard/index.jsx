@@ -1,5 +1,7 @@
 import { useAuth } from '../../context/AuthContext'
 import { getUserInfo, getUserActivity } from '../../services/userService'
+import { getWeekRange } from '../../services/adapters/dateHelpers'
+import { buildWeekSeries, summarizeActivity } from '../../services/adapters/activityAdapter'
 
 function Dashboard() {
   const { token, userId } = useAuth()
@@ -13,14 +15,13 @@ function Dashboard() {
   }
 
   async function testActivity() {
-    // Les 7 derniers jours
-    const end = new Date()
-    const start = new Date()
-    start.setDate(start.getDate() - 6)
-    const iso = (d) => d.toLocaleDateString('sv-SE') // astuce : 'sv-SE' donne AAAA-MM-JJ
+    const { startWeek, endWeek } = getWeekRange(0) // semaine en cours
+    console.log('période :', startWeek, '→', endWeek)
 
-    const data = await getUserActivity(token, iso(start), iso(end))
-    console.log(`${data.length} séance(s)`, data)
+    const sessions = await getUserActivity(token, startWeek, endWeek)
+    console.log('séances :', sessions)
+    console.table(buildWeekSeries(sessions, startWeek))
+    console.log('résumé :', summarizeActivity(sessions))
   }
 
   return (
