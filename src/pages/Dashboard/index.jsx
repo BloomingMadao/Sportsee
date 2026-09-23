@@ -5,9 +5,11 @@ function Dashboard() {
   const { token, userId } = useAuth()
 
   async function testInfo() {
-    const data = await getUserInfo(token)
-    console.log(data)
-    console.log('type de totalDistance :', typeof data.statistics.totalDistance)
+    const user = await getUserInfo(token)
+    console.log(user)
+    console.log('totalDistance :', user.statistics.totalDistance, typeof user.statistics.totalDistance)
+    console.log('durée :', user.statistics.totalDurationLabel)
+    console.log('objectif :', user.weeklyGoal)
   }
 
   async function testActivity() {

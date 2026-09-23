@@ -1,11 +1,15 @@
 import { USE_MOCK } from '../config'
 import { apiRequest } from './apiClient'
 import { mockUserInfo, mockUserActivity } from './mock/mockApi'
+import { formatUserInfo } from './adapters/userAdapter'
 
-export function getUserInfo(token) {
-  if (USE_MOCK) return mockUserInfo(token)
+export async function getUserInfo(token) {
+  const raw = USE_MOCK
+    ? await mockUserInfo(token)
+    : await apiRequest('/api/user-info', { token })
 
-  return apiRequest('/api/user-info', { token })
+  // Rien ne sort d'ici sans passer par l'adaptateur
+  return formatUserInfo(raw)
 }
 
 export function getUserActivity(token, startWeek, endWeek) {
