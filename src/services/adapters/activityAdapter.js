@@ -93,3 +93,35 @@ export function summarizeActivity(sessions) {
     longestDistance: Math.max(...sessions.map((s) => s.distance)),
   }
 }
+
+/**
+ * Regroupe les séances par semaine sur une période de plusieurs semaines.
+ * @param {Array} sessions - séances formatées
+ * @param {string} startWeek - lundi de la première semaine
+ * @param {number} weekCount - nombre de semaines
+ * @returns {Array} un objet par semaine : { label: 'S1', distance, … }
+ */
+export function buildWeeklyTotals(sessions, startWeek, weekCount = 4) {
+  const weeks = []
+
+  for (let index = 0; index < weekCount; index += 1) {
+    const from = addDays(startWeek, index * 7)
+    const to = addDays(from, 6)
+
+    const weekSessions = sessions.filter(
+      (session) => session.date >= from && session.date <= to
+    )
+
+    weeks.push({
+      label: `S${index + 1}`,
+      from,
+      to,
+      distance: round(weekSessions.reduce((sum, s) => sum + s.distance, 0)),
+      duration: weekSessions.reduce((sum, s) => sum + s.duration, 0),
+      calories: weekSessions.reduce((sum, s) => sum + s.calories, 0),
+      sessionCount: weekSessions.length,
+    })
+  }
+
+  return weeks
+}

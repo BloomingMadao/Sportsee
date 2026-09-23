@@ -29,14 +29,9 @@
   align-items: start;
 }
 
+/* Carte de graphique sans en-tête (la carte provisoire des calories) */
 .chartCard {
   padding: 24px;
-}
-
-.statColumn {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
 }
 
 .goalCard {
@@ -60,24 +55,14 @@
   font-size: 16px;
 }
 
-.weekNav {
+.statColumn {
   display: flex;
-  gap: 8px;
+  flex-direction: column;
+  gap: 16px;
 }
 
-.navButton {
-  width: 32px;
-  height: 32px;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-pill);
-  background-color: var(--color-surface);
-  color: var(--color-text);
-  font-size: 18px;
-  line-height: 1;
-  cursor: pointer;
-}
-
-.navButton:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
+.loading {
+  padding: 40px 0;
+  color: var(--color-text-muted);
+  text-align: center;
 }

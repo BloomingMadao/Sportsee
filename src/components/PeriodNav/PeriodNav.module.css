@@ -1,0 +1,36 @@
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.label {
+  color: var(--color-text);
+  font-size: 14px;
+  white-space: nowrap; /* empêche '28 mai - 25 juin' de passer à la ligne */
+}
+
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.button:hover:not(:disabled) {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}

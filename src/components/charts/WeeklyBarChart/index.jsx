@@ -18,7 +18,16 @@ import {
  * @param {string} color - couleur des barres
  * @param {number} [height] - hauteur du graphique en pixels
  */
-function WeeklyBarChart({ data, dataKey, label, unit, color, height = 280 }) {
+function WeeklyBarChart({
+  data,
+  dataKey,
+  label,
+  unit,
+  color,
+  height = 280,
+  barSize = 32,
+  radius = [6, 6, 0, 0],
+})  {
   return (
     <ResponsiveContainer width="100%" height={height}>
       <BarChart data={data} margin={{ top: 16, right: 8, bottom: 8, left: 8 }}>
@@ -44,7 +53,7 @@ function WeeklyBarChart({ data, dataKey, label, unit, color, height = 280 }) {
           formatter={(value) => [`${value} ${unit}`, label]}
         />
 
-        <Bar dataKey={dataKey} fill={color} radius={[6, 6, 0, 0]} maxBarSize={32} />
+        <Bar dataKey={dataKey} fill={color} radius={radius} maxBarSize={barSize} />
       </BarChart>
     </ResponsiveContainer>
   )

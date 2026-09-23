@@ -59,3 +59,30 @@ export function formatLongDate(iso) {
   return `${day === 1 ? '1er' : day} ${monthAndYear}`
 }
 
+/**
+ * Bornes d'un bloc de plusieurs semaines consécutives.
+ * @param {number} weekCount - nombre de semaines du bloc
+ * @param {number} blockOffset - 0 = bloc en cours, -1 = bloc précédent
+ * @returns {{ startWeek: string, endWeek: string }}
+ */
+export function getWeeksRange(weekCount = 4, blockOffset = 0, reference = new Date()) {
+  // Semaine la plus récente du bloc
+  const lastWeek = blockOffset * weekCount
+
+  const { endWeek } = getWeekRange(lastWeek, reference)
+  const { startWeek } = getWeekRange(lastWeek - (weekCount - 1), reference)
+
+  return { startWeek, endWeek }
+}
+
+/** '2026-05-28' → '28 mai' */
+export function formatDayMonth(iso) {
+  if (!iso) return ''
+
+  const date = fromISODate(iso)
+  const month = date.toLocaleDateString('fr-FR', { month: 'long' })
+  const day = date.getDate()
+
+  return `${day === 1 ? '1er' : day} ${month}`
+}
+

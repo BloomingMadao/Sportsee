@@ -1,36 +1,79 @@
 import { useState, useMemo } from 'react'
 import { useUserInfo } from '../../hooks/useUserInfo'
 import { useUserActivity } from '../../hooks/useUserActivity'
-import { getWeekRange, fromISODate } from '../../services/adapters/dateHelpers'
-import { buildWeekSeries, summarizeActivity } from '../../services/adapters/activityAdapter'
+import {
+  getWeekRange,
+  getWeeksRange,
+  fromISODate,
+  formatDayMonth,
+} from '../../services/adapters/dateHelpers'
+import {
+  buildWeekSeries,
+  buildWeeklyTotals,
+  summarizeActivity,
+} from '../../services/adapters/activityAdapter'
 import ProfileCard from '../../components/ProfileCard'
+import ChartCard from '../../components/ChartCard'
+import PeriodNav from '../../components/PeriodNav'
 import Card from '../../components/Card'
+import StatCard from '../../components/StatCard.jsx'
 import WeeklyBarChart from '../../components/charts/WeeklyBarChart'
 import GoalDonutChart from '../../components/charts/GoalDonutChart'
-import StatCard from '../../components/StatCard.jsx'
 import styles from './Dashboard.module.css'
-
 
 // '2026-09-21' → '21/09/2026'
 const toFrenchDate = (iso) => fromISODate(iso).toLocaleDateString('fr-FR')
 
-function Dashboard() {
-  const [weekOffset, setWeekOffset] = useState(0)
+const WEEKS_IN_BLOCK = 4
 
+function Dashboard() {
+  // --- Périodes : deux états INDÉPENDANTS -----------------------------
+  // 0 = période en cours, -1 = précédente, etc.
+  const [weekOffset, setWeekOffset] = useState(0)
+  const [blockOffset, setBlockOffset] = useState(0)
+
+  // useMemo : sans lui, ces fonctions produiraient un nouvel objet à chaque
+  // rendu, et les chaînes extraites relanceraient les hooks en boucle.
   const { startWeek, endWeek } = useMemo(
     () => getWeekRange(weekOffset),
     [weekOffset]
   )
 
-  const { data: user, isLoading: isUserLoading, error } = useUserInfo()
-  const { sessions, isLoading: isActivityLoading } = useUserActivity(startWeek, endWeek)
-
-  const weekSeries = useMemo(
-    () => buildWeekSeries(sessions, startWeek),
-    [sessions, startWeek]
+  const { startWeek: startBlock, endWeek: endBlock } = useMemo(
+    () => getWeeksRange(WEEKS_IN_BLOCK, blockOffset),
+    [blockOffset]
   )
-  const summary = useMemo(() => summarizeActivity(sessions), [sessions])
 
+  // --- Données --------------------------------------------------------
+  const { data: user, isLoading: isUserLoading, error } = useUserInfo()
+
+  // Le MÊME hook appelé deux fois : chaque appel a son état et sa requête
+  const { sessions: weekSessions, isLoading: isWeekLoading } = useUserActivity(
+    startWeek,
+    endWeek
+  )
+  const { sessions: blockSessions } = useUserActivity(startBlock, endBlock)
+
+  // --- Transformations ------------------------------------------------
+  const weekSeries = useMemo(
+    () => buildWeekSeries(weekSessions, startWeek),
+    [weekSessions, startWeek]
+  )
+
+  const summary = useMemo(() => summarizeActivity(weekSessions), [weekSessions])
+
+  const weeklyTotals = useMemo(
+    () => buildWeeklyTotals(blockSessions, startBlock, WEEKS_IN_BLOCK),
+    [blockSessions, startBlock]
+  )
+
+  const averagePerWeek = useMemo(() => {
+    const total = weeklyTotals.reduce((sum, week) => sum + week.distance, 0)
+    return Math.round(total / weeklyTotals.length)
+  }, [weeklyTotals])
+
+  // --- Rendu ----------------------------------------------------------
+  // Retours anticipés : l'ordre compte, on ne lit "user" qu'en dernier
   if (isUserLoading) return <p>Chargement…</p>
   if (error || !user) return <p>Impossible de charger vos données.</p>
 
@@ -45,16 +88,29 @@ function Dashboard() {
         <h2 className={styles.sectionTitle}>Vos dernières performances</h2>
 
         <div className={styles.grid}>
-          <Card className={styles.chartCard}>
+          <ChartCard
+            title={`${averagePerWeek} km en moyenne`}
+            subtitle="Total des kilomètres des 4 dernières semaines"
+            nav={{
+              label: `${formatDayMonth(startBlock)} - ${formatDayMonth(endBlock)}`,
+              onPrevious: () => setBlockOffset((n) => n - 1),
+              onNext: () => setBlockOffset((n) => n + 1),
+              canGoNext: blockOffset < 0,
+            }}
+          >
             <WeeklyBarChart
-              data={weekSeries}
+              data={weeklyTotals}
               dataKey="distance"
               label="Distance"
               unit="km"
-              color="#0B23F4"
+              color="#B6BDFC"
+              height={240}
+              barSize={16}
+              radius={[8, 8, 8, 8]}
             />
-          </Card>
+          </ChartCard>
 
+          {/* Provisoire : deviendra le graphique cardiaque à l'étape 8f */}
           <Card className={styles.chartCard}>
             <WeeklyBarChart
               data={weekSeries}
@@ -76,25 +132,11 @@ function Dashboard() {
             </p>
           </div>
 
-          <div className={styles.weekNav}>
-            <button
-              type="button"
-              className={styles.navButton}
-              onClick={() => setWeekOffset((n) => n - 1)}
-              aria-label="Semaine précédente"
-            >
-              ‹
-            </button>
-            <button
-              type="button"
-              className={styles.navButton}
-              onClick={() => setWeekOffset((n) => n + 1)}
-              disabled={weekOffset >= 0}
-              aria-label="Semaine suivante"
-            >
-              ›
-            </button>
-          </div>
+          <PeriodNav
+            onPrevious={() => setWeekOffset((n) => n - 1)}
+            onNext={() => setWeekOffset((n) => n + 1)}
+            canGoNext={weekOffset < 0}
+          />
         </div>
 
         <div className={styles.grid}>
@@ -108,10 +150,14 @@ function Dashboard() {
             </p>
             <p className={styles.goalSubtitle}>Courses hebdomadaires réalisées</p>
 
-            <GoalDonutChart
-              completed={summary.sessionCount}
-              goal={user.weeklyGoal}
-            />
+            {isWeekLoading ? (
+              <p className={styles.loading}>Chargement…</p>
+            ) : (
+              <GoalDonutChart
+                completed={summary.sessionCount}
+                goal={user.weeklyGoal}
+              />
+            )}
           </Card>
 
           <div className={styles.statColumn}>
