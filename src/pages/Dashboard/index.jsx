@@ -1,20 +1,64 @@
+import { useState, useMemo } from 'react'
 import { useUserInfo } from '../../hooks/useUserInfo'
+import { useUserActivity } from '../../hooks/useUserActivity'
+import { getWeekRange } from '../../services/adapters/dateHelpers'
+import { buildWeekSeries, summarizeActivity } from '../../services/adapters/activityAdapter'
 
 function Dashboard() {
-  const { data, isLoading, error } = useUserInfo()
+  // 0 = semaine en cours, -1 = précédente, etc.
+  const [weekOffset, setWeekOffset] = useState(0)
 
-  // Les "retours anticipés" évitent d'imbriquer trois ternaires dans le JSX
-  if (isLoading) return <p>Chargement…</p>
-  if (error) return <p>Impossible de charger vos données.</p>
+  // useMemo : ne recalcule QUE si weekOffset change.
+  // Sans lui, getWeekRange produirait un nouvel objet à chaque rendu,
+  // et les chaînes extraites relanceraient inutilement le hook.
+  const { startWeek, endWeek } = useMemo(
+    () => getWeekRange(weekOffset),
+    [weekOffset]
+  )
+
+  const { data: user, isLoading: isUserLoading } = useUserInfo()
+  const { sessions, isLoading: isActivityLoading } = useUserActivity(startWeek, endWeek)
+
+  // Même logique : on ne retransforme les séances que si elles ont changé
+  const weekSeries = useMemo(
+    () => buildWeekSeries(sessions, startWeek),
+    [sessions, startWeek]
+  )
+  const summary = useMemo(() => summarizeActivity(sessions), [sessions])
+
+  if (isUserLoading) return <p>Chargement…</p>
 
   return (
     <div>
-      <h1>Bonjour {data.profile.firstName}</h1>
-      <p>
-        {data.statistics.totalSessions} séances · {data.statistics.totalDistance} km ·{' '}
-        {data.statistics.totalDurationLabel}
-      </p>
-      <p>Objectif hebdomadaire : {data.weeklyGoal} séances</p>
+      <h1>Bonjour {user?.profile.firstName}</h1>
+
+      <div>
+        <button onClick={() => setWeekOffset((n) => n - 1)}>← Semaine précédente</button>
+        <span> {startWeek} → {endWeek} </span>
+        {/* Interdit d'aller dans le futur : aucune donnée n'y existe */}
+        <button onClick={() => setWeekOffset((n) => n + 1)} disabled={weekOffset >= 0}>
+          Semaine suivante →
+        </button>
+      </div>
+
+      {isActivityLoading ? (
+        <p>Chargement de la semaine…</p>
+      ) : (
+        <>
+          <p>
+            {summary.sessionCount} séances · {summary.totalDistance} km ·{' '}
+            {summary.totalCalories} kcal
+          </p>
+          <ul>
+            {weekSeries.map((day) => (
+              // key : identifiant STABLE et unique. Jamais l'index du tableau.
+              <li key={day.date}>
+                {day.label} — {day.distance} km
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
     </div>
   )
 }
