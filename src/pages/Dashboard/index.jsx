@@ -16,8 +16,9 @@ import ProfileCard from '../../components/ProfileCard'
 import ChartCard from '../../components/ChartCard'
 import PeriodNav from '../../components/PeriodNav'
 import Card from '../../components/Card'
-import StatCard from '../../components/StatCard.jsx'
+import StatCard from '../../components/StatCard'
 import WeeklyBarChart from '../../components/charts/WeeklyBarChart'
+import HeartRateChart from '../../components/charts/HeartRateChart'
 import GoalDonutChart from '../../components/charts/GoalDonutChart'
 import styles from './Dashboard.module.css'
 
@@ -29,39 +30,45 @@ const WEEKS_IN_BLOCK = 4
 function Dashboard() {
   // --- Périodes : deux états INDÉPENDANTS -----------------------------
   // 0 = période en cours, -1 = précédente, etc.
-  const [weekOffset, setWeekOffset] = useState(0)
-  const [blockOffset, setBlockOffset] = useState(0)
+  const [blockOffset, setBlockOffset] = useState(0) // bloc de 4 semaines
+  const [bpmOffset, setBpmOffset] = useState(0) // semaine du cardio
+
+  // Navigation de « Cette semaine » désactivée : la maquette n'en prévoit pas.
+  // Pour la réactiver, décommenter cette ligne, remplacer le useMemo de
+  // startWeek/endWeek plus bas, et décommenter le <PeriodNav> dans le JSX.
+
+  // const [weekOffset, setWeekOffset] = useState(0)
 
   // useMemo : sans lui, ces fonctions produiraient un nouvel objet à chaque
   // rendu, et les chaînes extraites relanceraient les hooks en boucle.
-  const { startWeek, endWeek } = useMemo(
-    () => getWeekRange(weekOffset),
-    [weekOffset]
-  )
-
   const { startWeek: startBlock, endWeek: endBlock } = useMemo(
     () => getWeeksRange(WEEKS_IN_BLOCK, blockOffset),
     [blockOffset]
   )
 
+  const { startWeek: startBpm, endWeek: endBpm } = useMemo(
+    () => getWeekRange(bpmOffset),
+    [bpmOffset]
+  )
+
+  // Toujours la semaine en cours : tableau vide = calculé une seule fois.
+  // Version navigable : 
+  // const {startWeek,endWeek} =useMemo(() => getWeekRange(weekOffset), [weekOffset])
+
+  const { startWeek, endWeek } = useMemo(() => getWeekRange(0), [])
+
   // --- Données --------------------------------------------------------
   const { data: user, isLoading: isUserLoading, error } = useUserInfo()
 
-  // Le MÊME hook appelé deux fois : chaque appel a son état et sa requête
+  // Le MÊME hook appelé trois fois : chaque appel a son état et sa requête
+  const { sessions: blockSessions } = useUserActivity(startBlock, endBlock)
+  const { sessions: bpmSessions } = useUserActivity(startBpm, endBpm)
   const { sessions: weekSessions, isLoading: isWeekLoading } = useUserActivity(
     startWeek,
     endWeek
   )
-  const { sessions: blockSessions } = useUserActivity(startBlock, endBlock)
 
   // --- Transformations ------------------------------------------------
-  const weekSeries = useMemo(
-    () => buildWeekSeries(weekSessions, startWeek),
-    [weekSessions, startWeek]
-  )
-
-  const summary = useMemo(() => summarizeActivity(weekSessions), [weekSessions])
-
   const weeklyTotals = useMemo(
     () => buildWeeklyTotals(blockSessions, startBlock, WEEKS_IN_BLOCK),
     [blockSessions, startBlock]
@@ -72,13 +79,25 @@ function Dashboard() {
     return Math.round(total / weeklyTotals.length)
   }, [weeklyTotals])
 
+  const bpmSeries = useMemo(
+    () => buildWeekSeries(bpmSessions, startBpm),
+    [bpmSessions, startBpm]
+  )
+
+  const averageHeartRate = useMemo(
+    () => summarizeActivity(bpmSessions).averageHeartRate,
+    [bpmSessions]
+  )
+
+  const summary = useMemo(() => summarizeActivity(weekSessions), [weekSessions])
+
   // --- Rendu ----------------------------------------------------------
-  // Retours anticipés : l'ordre compte, on ne lit "user" qu'en dernier
+  // Retours anticipés : l'ordre compte, on ne lit « user » qu'en dernier
   if (isUserLoading) return <p>Chargement…</p>
   if (error || !user) return <p>Impossible de charger vos données.</p>
 
   return (
-    <div className={styles.page}>
+    <div>
       <ProfileCard
         profile={user.profile}
         totalDistance={user.statistics.totalDistance}
@@ -110,16 +129,19 @@ function Dashboard() {
             />
           </ChartCard>
 
-          {/* Provisoire : deviendra le graphique cardiaque à l'étape 8f */}
-          <Card className={styles.chartCard}>
-            <WeeklyBarChart
-              data={weekSeries}
-              dataKey="calories"
-              label="Calories"
-              unit="kcal"
-              color="#F4320B"
-            />
-          </Card>
+          <ChartCard
+            title={averageHeartRate ? `${averageHeartRate} BPM` : '— BPM'}
+            variant="accent"
+            subtitle="Fréquence cardiaque moyenne"
+            nav={{
+              label: `${formatDayMonth(startBpm)} - ${formatDayMonth(endBpm)}`,
+              onPrevious: () => setBpmOffset((n) => n - 1),
+              onNext: () => setBpmOffset((n) => n + 1),
+              canGoNext: bpmOffset < 0,
+            }}
+          >
+            <HeartRateChart data={bpmSeries} height={240} />
+          </ChartCard>
         </div>
       </section>
 
@@ -132,11 +154,13 @@ function Dashboard() {
             </p>
           </div>
 
+          {/* Navigation désactivée : voir le commentaire en haut du composant.
           <PeriodNav
             onPrevious={() => setWeekOffset((n) => n - 1)}
             onNext={() => setWeekOffset((n) => n + 1)}
             canGoNext={weekOffset < 0}
           />
+          */}
         </div>
 
         <div className={styles.grid}>

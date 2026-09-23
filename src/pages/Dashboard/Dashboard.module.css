@@ -20,18 +20,13 @@
 }
 
 /* Grille asymétrique mesurée dans Figma : 450px / 572px, 30px d'écart.
-   Les unités "fr" conservent la proportion si la fenêtre rétrécit. */
+   Les unités « fr » conservent la proportion si la fenêtre rétrécit. */
 .grid {
   display: grid;
   grid-template-columns: 450fr 572fr;
   gap: 30px;
   margin-top: 24px;
   align-items: start;
-}
-
-/* Carte de graphique sans en-tête (la carte provisoire des calories) */
-.chartCard {
-  padding: 24px;
 }
 
 .goalCard {

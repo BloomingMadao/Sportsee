@@ -46,6 +46,10 @@ export function buildWeekSeries(sessions, startWeek) {
     const date = addDays(startWeek, index)
     const daySessions = sessions.filter((session) => session.date === date)
 
+    // Séances dont on connaît la fréquence cardiaque
+    const withHeartRate = daySessions.filter((s) => s.heartRateAverage !== null)
+    const hasHeartRate = withHeartRate.length > 0
+
     days.push({
       date,
       label: WEEKDAY_LABELS[index],
@@ -54,6 +58,20 @@ export function buildWeekSeries(sessions, startWeek) {
       duration: daySessions.reduce((sum, s) => sum + s.duration, 0),
       calories: daySessions.reduce((sum, s) => sum + s.calories, 0),
       sessionCount: daySessions.length,
+
+      // null et NON 0 : un jour sans séance ne doit rien dessiner du tout
+      heartRateMin: hasHeartRate
+        ? Math.min(...withHeartRate.map((s) => s.heartRateMin ?? s.heartRateAverage))
+        : null,
+      heartRateMax: hasHeartRate
+        ? Math.max(...withHeartRate.map((s) => s.heartRateMax ?? s.heartRateAverage))
+        : null,
+      heartRateAverage: hasHeartRate
+        ? Math.round(
+            withHeartRate.reduce((sum, s) => sum + s.heartRateAverage, 0) /
+              withHeartRate.length
+          )
+        : null,
     })
   }
 
