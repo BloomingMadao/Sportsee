@@ -36,7 +36,7 @@ function WeeklyBarChart({ data, dataKey, label, unit, color, height = 280 }) {
           axisLine={false}
           tick={{ fill: '#707070', fontSize: 13 }}
           unit={` ${unit}`}
-          width={64}
+          width="auto"
         />
 
         <Tooltip

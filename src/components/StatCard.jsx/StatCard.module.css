@@ -1,0 +1,36 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+  min-height: 103px;
+  padding: 24px 32px;
+  border-radius: var(--radius-lg);
+  background-color: var(--color-surface);
+  box-shadow: var(--shadow-card);
+}
+
+.label {
+  color: var(--color-text-muted);
+  font-size: 16px;
+}
+
+.value {
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.primary {
+  color: var(--color-primary);
+}
+
+.accent {
+  color: var(--color-accent);
+}
+
+/* L'unité reprend la couleur du parent, en plus clair et plus petit */
+.unit {
+  font-size: 18px;
+  font-weight: 500;
+  opacity: 0.45;
+}

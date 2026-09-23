@@ -6,7 +6,10 @@ import { buildWeekSeries, summarizeActivity } from '../../services/adapters/acti
 import ProfileCard from '../../components/ProfileCard'
 import Card from '../../components/Card'
 import WeeklyBarChart from '../../components/charts/WeeklyBarChart'
+import GoalDonutChart from '../../components/charts/GoalDonutChart'
+import StatCard from '../../components/StatCard.jsx'
 import styles from './Dashboard.module.css'
+
 
 // '2026-09-21' → '21/09/2026'
 const toFrenchDate = (iso) => fromISODate(iso).toLocaleDateString('fr-FR')
@@ -95,13 +98,34 @@ function Dashboard() {
         </div>
 
         <div className={styles.grid}>
-          <Card className={styles.chartCard}>
-            {isActivityLoading ? <p>Chargement…</p> : <p>Donut à venir (8d)</p>}
+          <Card className={styles.goalCard}>
+            <p className={styles.goalTitle}>
+              x{summary.sessionCount}
+              <span className={styles.goalTarget}>
+                {' '}
+                sur objectif de {user.weeklyGoal}
+              </span>
+            </p>
+            <p className={styles.goalSubtitle}>Courses hebdomadaires réalisées</p>
+
+            <GoalDonutChart
+              completed={summary.sessionCount}
+              goal={user.weeklyGoal}
+            />
           </Card>
 
           <div className={styles.statColumn}>
-            <Card className={styles.statCard}>Durée d'activité</Card>
-            <Card className={styles.statCard}>Distance</Card>
+            <StatCard
+              label="Durée d'activité"
+              value={summary.totalDuration}
+              unit="minutes"
+            />
+            <StatCard
+              label="Distance"
+              value={summary.totalDistance}
+              unit="kilomètres"
+              variant="accent"
+            />
           </div>
         </div>
       </section>

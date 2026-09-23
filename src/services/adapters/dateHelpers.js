@@ -59,4 +59,3 @@ export function formatLongDate(iso) {
   return `${day === 1 ? '1er' : day} ${monthAndYear}`
 }
 
-console.log(formatLongDate('2025-01-01'), '|', formatLongDate('2023-06-14'))

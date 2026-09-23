@@ -39,9 +39,25 @@
   gap: 16px;
 }
 
-.statCard {
-  min-height: 103px;
-  padding: 24px 32px;
+.goalCard {
+  padding: 32px;
+}
+
+.goalTitle {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+/* La seconde moitié du titre, en bleu clair comme sur la maquette */
+.goalTarget {
+  color: var(--color-primary-light);
+}
+
+.goalSubtitle {
+  margin-top: 8px;
+  color: var(--color-text-muted);
+  font-size: 16px;
 }
 
 .weekNav {
