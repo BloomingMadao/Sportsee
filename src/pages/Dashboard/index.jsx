@@ -3,6 +3,8 @@ import { useUserInfo } from '../../hooks/useUserInfo'
 import { useUserActivity } from '../../hooks/useUserActivity'
 import { getWeekRange } from '../../services/adapters/dateHelpers'
 import { buildWeekSeries, summarizeActivity } from '../../services/adapters/activityAdapter'
+import WeeklyDistanceChart from '../../components/charts/WeeklyDistanceChart'
+import WeeklyCaloriesChart from '../../components/charts/WeeklyCaloriesChart'
 
 function Dashboard() {
   // 0 = semaine en cours, -1 = précédente, etc.
@@ -49,14 +51,8 @@ function Dashboard() {
             {summary.sessionCount} séances · {summary.totalDistance} km ·{' '}
             {summary.totalCalories} kcal
           </p>
-          <ul>
-            {weekSeries.map((day) => (
-              // key : identifiant STABLE et unique. Jamais l'index du tableau.
-              <li key={day.date}>
-                {day.label} — {day.distance} km
-              </li>
-            ))}
-          </ul>
+          <WeeklyDistanceChart data={weekSeries} />
+          <WeeklyCaloriesChart data={weekSeries} />
         </>
       )}
     </div>
