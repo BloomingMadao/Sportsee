@@ -1,4 +1,5 @@
 import { toNumber, formatDuration, getInitials } from './helpers'
+import { formatLongDate } from './dateHelpers'
 
 // L'API ne renvoie pas l'objectif hebdomadaire : on choisit une valeur de repli.
 const DEFAULT_WEEKLY_GOAL = 3
@@ -30,7 +31,8 @@ export function formatUserInfo(raw) {
       height: toNumber(profile.height, null), // en cm
       weight: toNumber(profile.weight, null), // en kg
       pictureUrl: profile.profilePicture ?? null,
-      memberSince: profile.createdAt ?? null,
+        memberSince: profile.createdAt ?? null,
+      memberSinceLabel: formatLongDate(profile.createdAt), // '14 juin 2023'
 
       // Absent de l'API aujourd'hui. En le lisant quand même, l'application
       // fonctionnera sans modification le jour où le backend l'exposera.

@@ -1,0 +1,67 @@
+.section {
+  margin-top: 96px;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.sectionTitle {
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.sectionSubtitle {
+  margin-top: 8px;
+  color: var(--color-text-muted);
+  font-size: 16px;
+}
+
+/* Grille asymétrique mesurée dans Figma : 450px / 572px, 30px d'écart.
+   Les unités "fr" conservent la proportion si la fenêtre rétrécit. */
+.grid {
+  display: grid;
+  grid-template-columns: 450fr 572fr;
+  gap: 30px;
+  margin-top: 24px;
+  align-items: start;
+}
+
+.chartCard {
+  padding: 24px;
+}
+
+.statColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.statCard {
+  min-height: 103px;
+  padding: 24px 32px;
+}
+
+.weekNav {
+  display: flex;
+  gap: 8px;
+}
+
+.navButton {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.navButton:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}

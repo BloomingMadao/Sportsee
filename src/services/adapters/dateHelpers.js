@@ -41,3 +41,22 @@ export function getWeekRange(weekOffset = 0, reference = new Date()) {
   const startWeek = toISODate(start)
   return { startWeek, endWeek: addDays(startWeek, 6) }
 }
+
+/** '2023-06-14' → '14 juin 2023' | '2025-01-01' → '1er janvier 2025' */
+export function formatLongDate(iso) {
+  if (!iso) return null
+
+  const date = fromISODate(iso)
+  if (Number.isNaN(date.getTime())) return null
+
+  const day = date.getDate()
+  const monthAndYear = date.toLocaleDateString('fr-FR', {
+    month: 'long',
+    year: 'numeric',
+  })
+
+  // Seul le 1er est ordinal en français : on dit "2 mars", pas "2e mars"
+  return `${day === 1 ? '1er' : day} ${monthAndYear}`
+}
+
+console.log(formatLongDate('2025-01-01'), '|', formatLongDate('2023-06-14'))

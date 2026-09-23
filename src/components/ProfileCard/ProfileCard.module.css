@@ -1,0 +1,77 @@
+
+/* 225deg = du coin haut droit vers le coin bas gauche */
+.card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 180px;
+  padding: 32px 50px;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(225deg, #ffffff 0%, #f4f5ff 100%);
+  box-shadow: var(--shadow-card);
+}
+
+.identity {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+
+.avatar {
+  width: 112px;
+  height: 116px;
+  border-radius: var(--radius-md);
+  object-fit: cover; /* remplit le cadre sans déformer */
+}
+
+/* Repli affiché quand l'image ne charge pas */
+.avatarFallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+  font-size: 32px;
+  font-weight: 600;
+}
+
+.name {
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.memberSince {
+  margin-top: 6px;
+  color: var(--color-text-muted);
+  font-size: 16px;
+}
+
+.distance {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.distanceLabel {
+  color: var(--color-text-muted);
+  font-size: 16px;
+}
+
+.distanceValue {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  min-width: 182px;
+  padding: 24px 16px;
+  border-radius: var(--radius-md);
+  background-color: var(--color-primary);
+  color: var(--color-surface);
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.distanceUnit {
+  margin-left: 6px;
+  font-size: 18px;
+  font-weight: 500;
+}
