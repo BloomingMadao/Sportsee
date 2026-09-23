@@ -1,35 +1,20 @@
-import { useAuth } from '../../context/AuthContext'
-import { getUserInfo, getUserActivity } from '../../services/userService'
-import { getWeekRange } from '../../services/adapters/dateHelpers'
-import { buildWeekSeries, summarizeActivity } from '../../services/adapters/activityAdapter'
+import { useUserInfo } from '../../hooks/useUserInfo'
 
 function Dashboard() {
-  const { token, userId } = useAuth()
+  const { data, isLoading, error } = useUserInfo()
 
-  async function testInfo() {
-    const user = await getUserInfo(token)
-    console.log(user)
-    console.log('totalDistance :', user.statistics.totalDistance, typeof user.statistics.totalDistance)
-    console.log('durée :', user.statistics.totalDurationLabel)
-    console.log('objectif :', user.weeklyGoal)
-  }
-
-  async function testActivity() {
-    const { startWeek, endWeek } = getWeekRange(0) // semaine en cours
-    console.log('période :', startWeek, '→', endWeek)
-
-    const sessions = await getUserActivity(token, startWeek, endWeek)
-    console.log('séances :', sessions)
-    console.table(buildWeekSeries(sessions, startWeek))
-    console.log('résumé :', summarizeActivity(sessions))
-  }
+  // Les "retours anticipés" évitent d'imbriquer trois ternaires dans le JSX
+  if (isLoading) return <p>Chargement…</p>
+  if (error) return <p>Impossible de charger vos données.</p>
 
   return (
     <div>
-      <h1>Dashboard</h1>
-      <p>Session active : {userId}</p>
-      <button onClick={testInfo}>user-info</button>
-      <button onClick={testActivity}>user-activity (7 jours)</button>
+      <h1>Bonjour {data.profile.firstName}</h1>
+      <p>
+        {data.statistics.totalSessions} séances · {data.statistics.totalDistance} km ·{' '}
+        {data.statistics.totalDurationLabel}
+      </p>
+      <p>Objectif hebdomadaire : {data.weeklyGoal} séances</p>
     </div>
   )
 }
