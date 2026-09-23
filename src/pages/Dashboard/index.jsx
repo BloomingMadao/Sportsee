@@ -3,8 +3,7 @@ import { useUserInfo } from '../../hooks/useUserInfo'
 import { useUserActivity } from '../../hooks/useUserActivity'
 import { getWeekRange } from '../../services/adapters/dateHelpers'
 import { buildWeekSeries, summarizeActivity } from '../../services/adapters/activityAdapter'
-import WeeklyDistanceChart from '../../components/charts/WeeklyDistanceChart'
-import WeeklyCaloriesChart from '../../components/charts/WeeklyCaloriesChart'
+import WeeklyBarChart from '../../components/charts/WeeklyBarChart'
 
 function Dashboard() {
   // 0 = semaine en cours, -1 = précédente, etc.
@@ -51,8 +50,28 @@ function Dashboard() {
             {summary.sessionCount} séances · {summary.totalDistance} km ·{' '}
             {summary.totalCalories} kcal
           </p>
-          <WeeklyDistanceChart data={weekSeries} />
-          <WeeklyCaloriesChart data={weekSeries} />
+          <WeeklyBarChart
+            data={weekSeries}
+            dataKey="distance"
+            label="Distance"
+            unit="km"
+            color="#0B23F4"
+          />
+          <WeeklyBarChart
+            data={weekSeries}
+            dataKey="calories"
+            label="Calories"
+            unit="kcal"
+            color="#F4320B"
+          />
+
+          <WeeklyBarChart
+            data = {weekSeries}
+            dataKey = "duration"
+            label="Durée"
+            unit="min"
+            color="#fcc1b6"
+          />
         </>
       )}
     </div>
