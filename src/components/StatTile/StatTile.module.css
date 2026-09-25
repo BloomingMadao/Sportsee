@@ -1,0 +1,26 @@
+.tile {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+  min-height: 103px;
+  padding: 20px 24px;
+  border-radius: var(--radius-md);
+  background-color: var(--color-primary);
+  color: var(--color-surface);
+}
+
+.label {
+  font-size: 15px;
+}
+
+.value {
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.unit {
+  font-size: 17px;
+  font-weight: 500;
+  opacity: 0.7;
+}

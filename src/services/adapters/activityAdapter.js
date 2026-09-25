@@ -1,5 +1,5 @@
 import { toNumber } from './helpers'
-import { WEEKDAY_LABELS, addDays } from './dateHelpers'
+import { WEEKDAY_LABELS, addDays, fromISODate } from './dateHelpers'
 
 const round = (value) => Number(value.toFixed(1))
 
@@ -142,4 +142,33 @@ export function buildWeeklyTotals(sessions, startWeek, weekCount = 4) {
   }
 
   return weeks
+}
+
+/**
+ * Totaux sur l'ensemble de l'historique, pour la page Profil.
+ *
+ * ATTENTION - définition retenue pour les jours de repos : nombre de jours
+ * SANS séance entre la première et la dernière séance enregistrée.
+ * L'API ne fournit pas cette donnée ; définition à valider par le métier.
+ */
+export function summarizeHistory(sessions) {
+  if (sessions.length === 0) {
+    return { totalCalories: 0, restDays: 0, activeDays: 0 }
+  }
+
+  // Set : collection sans doublons. Deux séances le même jour = un seul jour actif.
+  const activeDates = new Set(sessions.map((session) => session.date))
+
+  // Les séances sont triées par date croissante en sortie d'adaptateur
+  const first = fromISODate(sessions[0].date)
+  const last = fromISODate(sessions[sessions.length - 1].date)
+
+  // 86 400 000 = nombre de millisecondes dans une journée
+  const spanDays = Math.round((last - first) / 86400000) + 1
+
+  return {
+    totalCalories: sessions.reduce((sum, s) => sum + s.calories, 0),
+    activeDays: activeDates.size,
+    restDays: Math.max(spanDays - activeDates.size, 0),
+  }
 }
