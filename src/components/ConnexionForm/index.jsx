@@ -13,10 +13,12 @@ function ConnexionForm() {
 
   const { submit, isLoading, error } = useLogin()
   const navigate = useNavigate()
-  const location = useLocation()
+  // const location = useLocation() --> pour garder en mémoire la dernière page avant la déconnexion
 
   // Page demandée avant la redirection, ou le dashboard par défaut
-  const destination = location.state?.from ?? '/dashboard'
+  // const destination = location.state?.from ?? '/dashboard'
+  const destination = '/dashboard'
+
 
   async function handleSubmit(event) {
     // Sans ça, le navigateur rechargerait la page et l'application repartirait de zéro
