@@ -28,3 +28,36 @@ export function formatDuration(minutes) {
 export function getInitials(firstName = '', lastName = '') {
   return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase()
 }
+
+/** 168 → '1m68' | null → null */
+export function formatHeight(centimeters) {
+  if (!centimeters) return null
+
+  const meters = Math.floor(centimeters / 100)
+  const rest = centimeters % 100
+
+  // padStart : 1m08 et non 1m8
+  return `${meters}m${String(rest).padStart(2, '0')}`
+}
+
+/**
+ * 1635 → { value: '27h', unit: '15min' }
+ * Le format de la maquette sépare la valeur en gras de l'unité en plus clair.
+ */
+export function splitDuration(minutes) {
+  const total = toNumber(minutes)
+  const hours = Math.floor(total / 60)
+  const rest = total % 60
+
+  if (hours === 0) return { value: `${rest}`, unit: 'min' }
+
+  return { value: `${hours}h`, unit: `${rest}min` }
+}
+
+/** 'female' → 'Femme' */
+export function formatGender(gender) {
+  if (gender === 'female') return 'Femme'
+  if (gender === 'male') return 'Homme'
+
+  return null // l'API ne renvoie pas ce champ aujourd'hui
+}

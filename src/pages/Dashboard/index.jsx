@@ -14,7 +14,7 @@ import {
 } from '../../services/adapters/activityAdapter'
 import ProfileCard from '../../components/ProfileCard'
 import ChartCard from '../../components/ChartCard'
-import PeriodNav from '../../components/PeriodNav'
+// import PeriodNav from '../../components/PeriodNav'
 import Card from '../../components/Card'
 import StatCard from '../../components/StatCard'
 import WeeklyBarChart from '../../components/charts/WeeklyBarChart'

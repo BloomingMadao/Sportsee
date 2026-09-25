@@ -21,7 +21,7 @@
   width: 112px;
   height: 116px;
   border-radius: var(--radius-md);
-  object-fit: cover; /* remplit le cadre sans déformer */
+  object-fit: inherit; /* remplit le cadre sans déformer */
 }
 
 /* Repli affiché quand l'image ne charge pas */
