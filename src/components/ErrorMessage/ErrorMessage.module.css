@@ -1,0 +1,16 @@
+.info {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    gap: 10px;
+}
+
+.info a{
+    color: var(--color-primary);
+    text-decoration: none;
+}
+
+.info a:hover{
+    color: var( --color-primary-light);
+    text-decoration: underline;
+}

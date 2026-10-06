@@ -32,6 +32,7 @@ export const MOCK_USERS = [
     username: 'emmaleroy',
     password: 'password789',
     // Emma n'a AUCUN objectif défini : cas à gérer en 6b
+    weeklyGoal:4,
     userInfos: {
       firstName: 'Emma',
       lastName: 'Leroy',
@@ -54,10 +55,11 @@ export const MOCK_USERS = [
     id: 'user456',
     username: 'marcdubois',
     password: 'password456',
+    weeklyGoal:2, 
     userInfos: {
       firstName: 'Marc',
       lastName: 'Dubois',
-      goal: 2, // chez Marc, l'objectif est ICI et s'appelle autrement
+// chez Marc, l'objectif est ICI et s'appelle autrement
       age: 45,
       gender: 'male',
       height: 180,

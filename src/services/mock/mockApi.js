@@ -71,12 +71,14 @@ export async function mockUserInfo(token) {
       weight: user.userInfos.weight,
       height: user.userInfos.height,
       profilePicture: user.userInfos.profilePicture,
+      gender:user.userInfos.gender
     },
     statistics: {
       totalDistance, // string, volontairement
       totalSessions: user.sessions.length,
       totalDuration,
     },
+    weeklyGoal : user.weeklyGoal,
   }
 }
 

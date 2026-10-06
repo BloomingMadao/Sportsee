@@ -6,7 +6,9 @@ import { summarizeHistory } from '../../services/adapters/activityAdapter'
 import { splitDuration } from '../../services/adapters/helpers'
 import Card from '../../components/Card'
 import StatTile from '../../components/StatTile'
+import ErrorMessage from '../../components/ErrorMessage'
 import styles from './Profil.module.css'
+
 
 /** Une ligne « Libellé : valeur » de la carte profil */
 function InfoRow({ label, value }) {
@@ -40,7 +42,7 @@ function Profil() {
 
   // --- Rendu ----------------------------------------------------------
   if (isLoading) return <p>Chargement…</p>
-  if (error || !user) return <p>Impossible de charger votre profil.</p>
+  if (error || !user) return <ErrorMessage status={error?.status ?? 500} />
 
   const { profile } = user
   const showImage = Boolean(profile.pictureUrl) && !hasImageError

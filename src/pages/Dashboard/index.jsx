@@ -20,6 +20,7 @@ import StatCard from '../../components/StatCard'
 import WeeklyBarChart from '../../components/charts/WeeklyBarChart'
 import HeartRateChart from '../../components/charts/HeartRateChart'
 import GoalDonutChart from '../../components/charts/GoalDonutChart'
+import ErrorMessage from '../../components/ErrorMessage'
 import styles from './Dashboard.module.css'
 
 // '2026-09-21' → '21/09/2026'
@@ -94,7 +95,7 @@ function Dashboard() {
   // --- Rendu ----------------------------------------------------------
   // Retours anticipés : l'ordre compte, on ne lit « user » qu'en dernier
   if (isUserLoading) return <p>Chargement…</p>
-  if (error || !user) return <p>Impossible de charger vos données.</p>
+  if (error || !user) return <ErrorMessage status={error?.status ?? 500} />
 
   return (
     <div>
