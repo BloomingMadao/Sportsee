@@ -1,10 +1,12 @@
-
+// Données de démonstration, utilisées quand VITE_USE_MOCK=true.
+// Même structure que app/data.json du backend, à une différence près :
+// les dates sont relatives (daysAgo) pour toujours avoir des séances récentes.
 export const MOCK_USERS = [
   {
     id: 'user123',
     username: 'sophiemartin',
     password: 'password123',
-    weeklyGoal: 2, // à la racine chez Sophie
+    weeklyGoal: 2,
     userInfos: {
       firstName: 'Sophie',
       lastName: 'Martin',
@@ -15,7 +17,6 @@ export const MOCK_USERS = [
       createdAt: '2025-01-01',
       profilePicture: 'http://localhost:8000/images/sophie.jpg',
     },
-    // daysAgo = nombre de jours avant aujourd'hui (converti en date par mockApi)
     sessions: [
       { daysAgo: 1, distance: 5.8, duration: 38, caloriesBurned: 422, heartRate: { min: 140, max: 178, average: 163 } },
       { daysAgo: 3, distance: 3.2, duration: 20, caloriesBurned: 248, heartRate: { min: 148, max: 184, average: 171 } },
@@ -31,7 +32,6 @@ export const MOCK_USERS = [
     id: 'user789',
     username: 'emmaleroy',
     password: 'password789',
-    // Emma n'a AUCUN objectif défini : cas à gérer en 6b
     weeklyGoal:4,
     userInfos: {
       firstName: 'Emma',
@@ -58,8 +58,6 @@ export const MOCK_USERS = [
     weeklyGoal:2, 
     userInfos: {
       firstName: 'Marc',
-      lastName: 'Dubois',
-// chez Marc, l'objectif est ICI et s'appelle autrement
       age: 45,
       gender: 'male',
       height: 180,

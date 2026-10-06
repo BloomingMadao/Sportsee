@@ -6,7 +6,7 @@ import { summarizeHistory } from '../../services/adapters/activityAdapter'
 import { splitDuration } from '../../services/adapters/helpers'
 import Card from '../../components/Card'
 import StatTile from '../../components/StatTile'
-import ErrorMessage from '../../components/ErrorMessage'
+import { useErrorRedirect } from '../../hooks/useErrorRedirect'
 import styles from './Profil.module.css'
 
 
@@ -32,17 +32,21 @@ function Profil() {
     return { start: user.profile.memberSince, end: toISODate(new Date()) }
   }, [user])
 
-  // Le hook ne lance aucune requête tant que les bornes valent null
-  const { sessions: allSessions } = useUserActivity(
+   // Le hook ne lance aucune requête tant que les bornes valent null
+  const { sessions: allSessions, error: historyError } = useUserActivity(
     historyRange.start,
     historyRange.end
   )
 
   const history = useMemo(() => summarizeHistory(allSessions), [allSessions])
 
+  // Toutes les erreurs de la page → page d'erreur commune
+  useErrorRedirect(error ?? historyError)
+
   // --- Rendu ----------------------------------------------------------
   if (isLoading) return <p>Chargement…</p>
-  if (error || !user) return <ErrorMessage status={error?.status ?? 500} />
+  // Pas de données = erreur en cours de redirection : on n'affiche rien
+  if (!user) return null
 
   const { profile } = user
   const showImage = Boolean(profile.pictureUrl) && !hasImageError

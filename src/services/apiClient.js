@@ -1,6 +1,5 @@
 import { API_URL } from '../config'
 import { ApiError } from './ApiError'
-import { notifySessionExpired } from './sessionEvents'
 
 /**
  * Point de passage unique de TOUTES les requêtes HTTP de l'application.
@@ -27,18 +26,11 @@ export async function apiRequest(path, { method = 'GET', body, token } = {}) {
   // .catch(() => null) : si la réponse n'est pas du JSON, on ne plante pas
   const data = await response.json().catch(() => null)
 
-  // Un 401 ou un 500 n'est PAS une erreur pour fetch : c'est à nous de le vérifier
+ // Un 401 ou un 500 n'est PAS une erreur pour fetch : c'est à nous de le vérifier.
+  // (La déconnexion sur 401/403 est gérée dans services/api/index.js,
+  // pour qu'elle s'applique AUSSI au mock.)
   if (!response.ok) {
-    // 401 = jeton absent, 403 = jeton invalide ou expiré.
-    // La condition "token" est essentielle : le login répond aussi 401 sur de
-    // mauvais identifiants, mais il n'envoie aucun jeton. Sans elle, une simple
-    // faute de frappe dans le formulaire déclencherait une déconnexion.
-    if (token && (response.status === 401 || response.status === 403)) {
-      notifySessionExpired()
-    }
-
     throw new ApiError(response.status, data?.message ?? 'Erreur inconnue')
   }
-
   return data
 }

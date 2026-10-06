@@ -21,6 +21,10 @@ function AuthProvider({ children }) {
   // Avec useState(readStoredAuth()), on lirait le localStorage à chaque rendu pour rien.
   const [auth, setAuth] = useState(readStoredAuth)
 
+  // true quand la session a été coupée par le serveur (401/403) :
+  // la page de connexion affichera « Votre session a expiré... »
+  // plutôt qu'un retour au formulaire sans explication.
+  const [isSessionExpired, setIsSessionExpired] = useState(false)
 
   // useEffect exécute du code APRÈS le rendu, pour tout ce qui sort de React :
   // abonnements, minuteurs, accès au DOM. Ici, on s'abonne une seule fois.
@@ -29,18 +33,23 @@ function AuthProvider({ children }) {
     // onSessionExpired renvoie justement le désabonnement : on le retourne tel quel.
     return onSessionExpired(() => {
       setAuth(null)
+      setIsSessionExpired(true)
       localStorage.removeItem(STORAGE_KEY)
     })
   }, []) // tableau vide = exécuté au montage uniquement
-  // Appelée après une réponse réussie du backend, à l'étape 4b.
+
+  // Appelée après une réponse réussie du backend (voir useLogin)
   function login({ token, userId }) {
     const next = { token, userId }
     setAuth(next) // met à jour React
+    setIsSessionExpired(false)
     localStorage.setItem(STORAGE_KEY, JSON.stringify(next)) // survit au rechargement
   }
 
+  // Déconnexion volontaire (bouton du header) : ce n'est pas une expiration
   function logout() {
     setAuth(null)
+    setIsSessionExpired(false)
     localStorage.removeItem(STORAGE_KEY)
   }
 
@@ -49,6 +58,7 @@ function AuthProvider({ children }) {
     token: auth?.token ?? null,
     userId: auth?.userId ?? null,
     isAuthenticated: auth !== null,
+    isSessionExpired,
     login,
     logout,
   }

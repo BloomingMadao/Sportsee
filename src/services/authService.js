@@ -1,14 +1,7 @@
-import { USE_MOCK } from '../config'
-import { apiRequest } from './apiClient'
-import { mockLogin } from './mock/mockApi'
+import { api } from './api'
 
-// La SEULE fonction que le reste de l'application connaîtra pour se connecter.
-// Elle choisit elle-même entre le mock et le vrai backend.
+// La SEULE fonction que le reste de l'application connaît pour se connecter.
+// Le choix mock / vrai backend est fait ailleurs, une fois pour toutes (api/index.js).
 export function login(username, password) {
-  if (USE_MOCK) return mockLogin(username, password)
-
-  return apiRequest('/api/login', {
-    method: 'POST',
-    body: { username, password },
-  })
+  return api.login(username, password)
 }

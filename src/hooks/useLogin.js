@@ -1,24 +1,11 @@
 import { useState } from 'react'
 import { login as loginRequest } from '../services/authService'
 import { useAuth } from '../context/AuthContext'
-
-/**
- * Traduit une ApiError en message affichable par l'utilisateur.
- * Les messages du backend sont en anglais et parfois techniques :
- * on ne les montre jamais tels quels.
- */
-function getErrorMessage(error) {
-  switch (error.status) {
-    case 0:
-      return 'Serveur injoignable. Vérifiez votre connexion.'
-    case 400:
-      return 'Veuillez renseigner votre identifiant et votre mot de passe.'
-    case 401:
-      return 'Identifiant ou mot de passe incorrect.'
-    default:
-      return 'Une erreur est survenue. Réessayez dans un instant.'
-  }
-}
+import {
+  LOGIN_FORM_STATUSES,
+  getLoginErrorMessage,
+} from '../services/errorMessages'
+import { useErrorRedirect } from './useErrorRedirect'
 
 export function useLogin() {
   // On récupère la fonction du contexte et on la renomme pour éviter
@@ -26,7 +13,19 @@ export function useLogin() {
   const { login: saveSession } = useAuth()
 
   const [isLoading, setIsLoading] = useState(false)
+  // On garde l'ApiError complète (et plus seulement un texte) :
+  // c'est son "status" qui décide de ce qu'on en fait.
   const [error, setError] = useState(null)
+
+  // Deux familles d'erreurs :
+  // - 400 / 401 = erreur de saisie → message sous le formulaire (ignorées ici)
+  // - 0, 500... = panne technique  → page d'erreur commune, comme partout
+  useErrorRedirect(error, { ignore: LOGIN_FORM_STATUSES })
+
+  const formError =
+    error && LOGIN_FORM_STATUSES.includes(error.status)
+      ? getLoginErrorMessage(error.status)
+      : null
 
   /**
    * @returns {Promise<boolean>} true si la connexion a réussi
@@ -36,21 +35,22 @@ export function useLogin() {
     setError(null) // on efface l'erreur précédente avant de retenter
 
     try {
-      // authService choisit tout seul entre le mock et le vrai backend
+      // authService ne sait même pas s'il parle au mock ou au vrai backend
       const data = await loginRequest(username, password)
 
       // data vaut { token, userId } : on le range dans le contexte
       saveSession(data)
       return true
     } catch (err) {
-      setError(getErrorMessage(err))
+      setError(err)
       return false
     } finally {
       // finally s'exécute dans les deux cas : succès comme échec.
-      // Sans lui, il faudrait écrire setIsLoading(false) deux fois.
       setIsLoading(false)
     }
   }
 
-  return { submit, isLoading, error }
+  // Le formulaire reçoit directement un texte prêt à afficher (ou null), comme avant :
+  // ConnexionForm n'a pas besoin d'être modifié.
+  return { submit, isLoading, error: formError }
 }

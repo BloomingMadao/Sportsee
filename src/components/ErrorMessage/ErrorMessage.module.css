@@ -1,16 +1,15 @@
 .info {
-    display: flex;
-    flex-direction: column;
-    text-align: center;
-    gap: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: center;
 }
 
-.info a{
-    color: var(--color-primary);
-    text-decoration: none;
+.info a {
+  color: var(--color-primary);
+  text-decoration: none;
 }
 
-.info a:hover{
-    color: var( --color-primary-light);
-    text-decoration: underline;
+.info a:hover {
+  text-decoration: underline;
 }

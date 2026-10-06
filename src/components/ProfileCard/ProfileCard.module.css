@@ -57,6 +57,14 @@
   font-size: 16px;
 }
 
+.distanceImg{
+  color:var(--color-surface);
+  height: 1em;
+  width: 1.5em;
+  padding-right: 3px;
+  align-self: center;
+}
+
 .distanceValue {
   display: flex;
   align-items: baseline;

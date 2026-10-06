@@ -1,25 +1,17 @@
-import { USE_MOCK } from '../config'
-import { apiRequest } from './apiClient'
-import { mockUserInfo, mockUserActivity } from './mock/mockApi'
+import { api } from './api'
 import { formatUserInfo } from './adapters/userAdapter'
 import { formatActivity } from './adapters/activityAdapter'
 
-export async function getUserInfo(token) {
-  const raw = USE_MOCK
-    ? await mockUserInfo(token)
-    : await apiRequest('/api/user-info', { token })
+// Rôle de ce fichier : appeler l'API (mock ou réelle, peu importe)
+// puis faire passer la réponse brute dans l'adaptateur.
+// Rien ne sort d'ici sans être au format attendu par les composants.
 
-  // Rien ne sort d'ici sans passer par l'adaptateur
+export async function getUserInfo(token) {
+  const raw = await api.getUserInfo(token)
   return formatUserInfo(raw)
 }
 
 export async function getUserActivity(token, startWeek, endWeek) {
-  if (USE_MOCK) {
-    return formatActivity(await mockUserActivity(token, startWeek, endWeek))
-  }
-
-  const query = new URLSearchParams({ startWeek, endWeek })
-  const raw = await apiRequest(`/api/user-activity?${query}`, { token })
-
+  const raw = await api.getUserActivity(token, startWeek, endWeek)
   return formatActivity(raw)
 }

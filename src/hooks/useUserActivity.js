@@ -1,50 +1,33 @@
-import { useState, useEffect } from 'react'
+import { useMemo } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { getUserActivity } from '../services/userService'
+import { useApiRequest } from './useApiRequest'
+
+// Déclaré hors du hook : la même référence à chaque rendu (voir useApiRequest)
+const NO_SESSIONS = []
 
 /**
  * Charge les séances d'une période donnée.
- * @param {string} startWeek - 'AAAA-MM-JJ'
- * @param {string} endWeek - 'AAAA-MM-JJ'
+ * @param {string|null} startWeek - 'AAAA-MM-JJ' (null = pas encore connu)
+ * @param {string|null} endWeek - 'AAAA-MM-JJ'
  * @returns {{ sessions: Array, isLoading: boolean, error: Error|null }}
  */
 export function useUserActivity(startWeek, endWeek) {
   const { token } = useAuth()
 
-  // [] et non null : les composants pourront faire .map() sans vérification
-  const [sessions, setSessions] = useState([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState(null)
+  // Trois primitives en dépendances : React les compare par valeur.
+  // Tant qu'une borne manque (page Profil avant la réponse user-info),
+  // request vaut null et aucune requête ne part.
+  const request = useMemo(
+    () =>
+      token && startWeek && endWeek
+        ? () => getUserActivity(token, startWeek, endWeek)
+        : null,
+    [token, startWeek, endWeek]
+  )
 
-  useEffect(() => {
-    if (!token || !startWeek || !endWeek) return
+  // [] par défaut : les composants peuvent faire .map() sans vérification
+  const { data, isLoading, error } = useApiRequest(request, NO_SESSIONS)
 
-    let ignore = false
-
-    setIsLoading(true)
-    setError(null)
-
-    getUserActivity(token, startWeek, endWeek)
-      .then((result) => {
-        if (!ignore) setSessions(result)
-      })
-      .catch((err) => {
-        if (!ignore) {
-          setError(err)
-          // On vide la liste : mieux vaut un graphique vide que les données
-          // de la semaine précédente affichées sous un message d'erreur.
-          setSessions([])
-        }
-      })
-      .finally(() => {
-        if (!ignore) setIsLoading(false)
-      })
-
-    return () => {
-      ignore = true
-    }
-    // Trois primitives : React les compare par valeur, pas par référence
-  }, [token, startWeek, endWeek])
-
-  return { sessions, isLoading, error }
+  return { sessions: data, isLoading, error }
 }

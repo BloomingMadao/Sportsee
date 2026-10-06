@@ -7,7 +7,7 @@ import {
 } from './helpers'
 import { formatLongDate } from './dateHelpers'
 
-// L'API ne renvoie pas l'objectif hebdomadaire : on choisit une valeur de repli.
+// Valeur de repli si la réponse ne contient pas d'objectif hebdomadaire
 const DEFAULT_WEEKLY_GOAL = 3
 
 /**
@@ -58,11 +58,7 @@ export function formatUserInfo(raw) {
           : 0,
     },
 
-    // L'objectif se cache à trois endroits différents selon l'utilisateur.
-    // ?? enchaîné : on prend la première valeur non nulle trouvée.
-    weeklyGoal: toNumber(
-      raw.weeklyGoal ?? profile.goal ?? DEFAULT_WEEKLY_GOAL,
-      DEFAULT_WEEKLY_GOAL
-    ),
+    // ?? : si weeklyGoal est absent (undefined ou null), on prend la valeur de repli
+    weeklyGoal: toNumber(raw.weeklyGoal ?? DEFAULT_WEEKLY_GOAL, DEFAULT_WEEKLY_GOAL),
   }
 }

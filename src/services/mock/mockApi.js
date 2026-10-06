@@ -1,5 +1,7 @@
 import { ApiError } from '../ApiError'
 import { MOCK_USERS } from './mockData'
+// On réutilise les outils de dates de l'application au lieu de les recopier
+import { toISODate, addDays } from '../adapters/dateHelpers'
 
 const MOCK_DELAY = 500 // simule la latence réseau, pour voir les états de chargement
 
@@ -24,14 +26,8 @@ export async function mockLogin(username, password) {
 
 // --- Outils partagés --------------------------------------------------
 
-const pad = (n) => String(n).padStart(2, '0')
-
 // Convertit un nombre de jours en date 'AAAA-MM-JJ' (heure locale)
-function dateFromDaysAgo(daysAgo) {
-  const date = new Date()
-  date.setDate(date.getDate() - daysAgo)
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`
-}
+const dateFromDaysAgo = (daysAgo) => addDays(toISODate(new Date()), -daysAgo)
 
 // Reproduit le middleware authenticateToken du backend
 function getUserFromToken(token) {
@@ -62,23 +58,23 @@ export async function mockUserInfo(token) {
   )
 
   return {
-    // On recopie champ par champ, comme le backend : ni gender, ni objectif
+    // On recopie champ par champ, exactement comme le backend
     profile: {
       firstName: user.userInfos.firstName,
       lastName: user.userInfos.lastName,
       createdAt: user.userInfos.createdAt,
+      gender: user.userInfos.gender,
       age: user.userInfos.age,
       weight: user.userInfos.weight,
       height: user.userInfos.height,
       profilePicture: user.userInfos.profilePicture,
-      gender:user.userInfos.gender
     },
+    weeklyGoal: user.weeklyGoal,
     statistics: {
       totalDistance, // string, volontairement
       totalSessions: user.sessions.length,
       totalDuration,
     },
-    weeklyGoal : user.weeklyGoal,
   }
 }
 
@@ -107,4 +103,13 @@ export async function mockUserActivity(token, startWeek, endWeek) {
     // Au format AAAA-MM-JJ, comparer des chaînes revient à comparer des dates
     .filter((s) => s.date >= startWeek && s.date <= endWeek && s.date <= today)
     .sort((a, b) => a.date.localeCompare(b.date))
+}
+
+// --- Interface commune ------------------------------------------------
+// Mêmes noms de méthodes que realApi : c'est ce qui permet à api/index.js
+// de remplacer l'un par l'autre sans que le reste du code s'en aperçoive.
+export const mockApi = {
+  login: mockLogin,
+  getUserInfo: mockUserInfo,
+  getUserActivity: mockUserActivity,
 }

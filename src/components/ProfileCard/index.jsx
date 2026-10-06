@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import logo from '../../assets/OUTLINE.svg'
 import styles from './ProfileCard.module.css'
 
 /**
@@ -37,10 +38,12 @@ function ProfileCard({ profile, totalDistance }) {
           )}
         </div>
       </div>
-
+        
       <div className={styles.distance}>
+       
         <p className={styles.distanceLabel}>Distance totale parcourue</p>
         <p className={styles.distanceValue}>
+          <img className={styles.distanceImg} src={logo} />
           {totalDistance}
           <span className={styles.distanceUnit}> km</span>
         </p>

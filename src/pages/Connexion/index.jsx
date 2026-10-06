@@ -1,3 +1,5 @@
+import { Navigate, useLocation } from 'react-router-dom'
+import { useAuth } from '../../context/AuthContext'
 import Card from '../../components/Card'
 import Logo from '../../components/Logo'
 import ConnexionForm from '../../components/ConnexionForm'
@@ -5,6 +7,19 @@ import connexionImage from '../../assets/connexion.jpg'
 import styles from './Connexion.module.css'
 
 function Connexion() {
+  const { isAuthenticated } = useAuth()
+  const location = useLocation()
+
+  // Connecté (déjà, ou à l'instant grâce au formulaire) : on quitte la page.
+  // Destination : la page demandée avant la redirection, mémorisée par
+  // ProtectedRoute (ex. /profil après une session expirée), sinon le dashboard.
+  // C'est le SEUL endroit qui décide où aller après la connexion.
+  // replace : la page de connexion sort de l'historique, « Précédent »
+  // ne ramène pas sur un formulaire devenu inutile.
+  if (isAuthenticated) {
+    return <Navigate to={location.state?.from ?? '/dashboard'} replace />
+  }
+
   return (
     // Cette page n'est pas dans le Layout : elle a donc besoin de son propre <main>
     <main className={styles.page}>

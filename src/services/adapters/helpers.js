@@ -59,5 +59,5 @@ export function formatGender(gender) {
   if (gender === 'female') return 'Femme'
   if (gender === 'male') return 'Homme'
 
-  return null // l'API ne renvoie pas ce champ aujourd'hui
+  return null // valeur absente ou inconnue : la page affichera « non renseigné »
 }

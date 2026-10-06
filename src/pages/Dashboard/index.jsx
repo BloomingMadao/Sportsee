@@ -20,7 +20,7 @@ import StatCard from '../../components/StatCard'
 import WeeklyBarChart from '../../components/charts/WeeklyBarChart'
 import HeartRateChart from '../../components/charts/HeartRateChart'
 import GoalDonutChart from '../../components/charts/GoalDonutChart'
-import ErrorMessage from '../../components/ErrorMessage'
+import { useErrorRedirect } from '../../hooks/useErrorRedirect'
 import styles from './Dashboard.module.css'
 
 // '2026-09-21' → '21/09/2026'
@@ -59,16 +59,26 @@ function Dashboard() {
   const { startWeek, endWeek } = useMemo(() => getWeekRange(0), [])
 
   // --- Données --------------------------------------------------------
-  const { data: user, isLoading: isUserLoading, error } = useUserInfo()
+  const { data: user, error: userError } = useUserInfo()
 
   // Le MÊME hook appelé trois fois : chaque appel a son état et sa requête
-  const { sessions: blockSessions } = useUserActivity(startBlock, endBlock)
-  const { sessions: bpmSessions } = useUserActivity(startBpm, endBpm)
-  const { sessions: weekSessions, isLoading: isWeekLoading } = useUserActivity(
-    startWeek,
-    endWeek
+  const { sessions: blockSessions, error: blockError } = useUserActivity(
+    startBlock,
+    endBlock
   )
+  const { sessions: bpmSessions, error: bpmError } = useUserActivity(
+    startBpm,
+    endBpm
+  )
+  const {
+    sessions: weekSessions,
+    isLoading: isWeekLoading,
+    error: weekError,
+  } = useUserActivity(startWeek, endWeek)
 
+  // Une seule ligne pour TOUTES les erreurs de la page : la première trouvée
+  // déclenche la redirection vers la page d'erreur commune.
+  useErrorRedirect(userError ?? blockError ?? bpmError ?? weekError)
   // --- Transformations ------------------------------------------------
   const weeklyTotals = useMemo(
     () => buildWeeklyTotals(blockSessions, startBlock, WEEKS_IN_BLOCK),
@@ -93,9 +103,11 @@ function Dashboard() {
   const summary = useMemo(() => summarizeActivity(weekSessions), [weekSessions])
 
   // --- Rendu ----------------------------------------------------------
-  // Retours anticipés : l'ordre compte, on ne lit « user » qu'en dernier
-  if (isUserLoading) return <p>Chargement…</p>
-  if (error || !user) return <ErrorMessage status={error?.status ?? 500} />
+
+  
+  // Pas de données = une erreur est survenue : useErrorRedirect est déjà
+  // en train de rediriger, on n'affiche rien en attendant.
+  if (!user) return null
 
   return (
     <div>
