@@ -9,14 +9,17 @@ import {
 } from 'recharts'
 
 /**
- * Graphique en barres d'une série hebdomadaire (7 jours).
+ * Graphique en barres générique (une barre par entrée de data).
+ * Utilisé par le dashboard pour les 4 dernières semaines.
  *
- * @param {Array} data - sortie de buildWeekSeries
+ * @param {Array} data - sortie de buildWeeklyTotals (ou buildWeekSeries)
  * @param {string} dataKey - propriété à dessiner : 'distance', 'calories', 'duration'…
  * @param {string} label - nom affiché dans l'infobulle
  * @param {string} unit - suffixe des valeurs : 'km', 'kcal'…
  * @param {string} color - couleur des barres
  * @param {number} [height] - hauteur du graphique en pixels
+ * @param {number} [barSize] - largeur maximale d'une barre
+ * @param {number[]} [radius] - arrondis [haut-g, haut-d, bas-d, bas-g]
  */
 function WeeklyBarChart({
   data,
@@ -27,7 +30,7 @@ function WeeklyBarChart({
   height = 280,
   barSize = 32,
   radius = [6, 6, 0, 0],
-})  {
+}) {
   return (
     <ResponsiveContainer width="100%" height={height}>
       <BarChart data={data} margin={{ top: 16, right: 8, bottom: 8, left: 8 }}>

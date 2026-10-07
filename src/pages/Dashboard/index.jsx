@@ -14,7 +14,6 @@ import {
 } from '../../services/adapters/activityAdapter'
 import ProfileCard from '../../components/ProfileCard'
 import ChartCard from '../../components/ChartCard'
-// import PeriodNav from '../../components/PeriodNav'
 import Card from '../../components/Card'
 import StatCard from '../../components/StatCard'
 import WeeklyBarChart from '../../components/charts/WeeklyBarChart'
@@ -34,12 +33,6 @@ function Dashboard() {
   const [blockOffset, setBlockOffset] = useState(0) // bloc de 4 semaines
   const [bpmOffset, setBpmOffset] = useState(0) // semaine du cardio
 
-  // Navigation de « Cette semaine » désactivée : la maquette n'en prévoit pas.
-  // Pour la réactiver, décommenter cette ligne, remplacer le useMemo de
-  // startWeek/endWeek plus bas, et décommenter le <PeriodNav> dans le JSX.
-
-  // const [weekOffset, setWeekOffset] = useState(0)
-
   // useMemo : sans lui, ces fonctions produiraient un nouvel objet à chaque
   // rendu, et les chaînes extraites relanceraient les hooks en boucle.
   const { startWeek: startBlock, endWeek: endBlock } = useMemo(
@@ -52,10 +45,8 @@ function Dashboard() {
     [bpmOffset]
   )
 
-  // Toujours la semaine en cours : tableau vide = calculé une seule fois.
-  // Version navigable : 
-  // const {startWeek,endWeek} =useMemo(() => getWeekRange(weekOffset), [weekOffset])
-
+  // « Cette semaine » = toujours la semaine en cours : la maquette ne prévoit
+  // pas de flèches sur ce bloc. Tableau vide = calculé une seule fois.
   const { startWeek, endWeek } = useMemo(() => getWeekRange(0), [])
 
   // --- Données --------------------------------------------------------
@@ -79,6 +70,7 @@ function Dashboard() {
   // Une seule ligne pour TOUTES les erreurs de la page : la première trouvée
   // déclenche la redirection vers la page d'erreur commune.
   useErrorRedirect(userError ?? blockError ?? bpmError ?? weekError)
+
   // --- Transformations ------------------------------------------------
   const weeklyTotals = useMemo(
     () => buildWeeklyTotals(blockSessions, startBlock, WEEKS_IN_BLOCK),
@@ -103,8 +95,6 @@ function Dashboard() {
   const summary = useMemo(() => summarizeActivity(weekSessions), [weekSessions])
 
   // --- Rendu ----------------------------------------------------------
-
-  
   // Pas de données = une erreur est survenue : useErrorRedirect est déjà
   // en train de rediriger, on n'affiche rien en attendant.
   if (!user) return null
@@ -158,22 +148,10 @@ function Dashboard() {
       </section>
 
       <section className={styles.section}>
-        <div className={styles.sectionHeader}>
-          <div>
-            <h2 className={styles.sectionTitle}>Cette semaine</h2>
-            <p className={styles.sectionSubtitle}>
-              Du {toFrenchDate(startWeek)} au {toFrenchDate(endWeek)}
-            </p>
-          </div>
-
-          {/* Navigation désactivée : voir le commentaire en haut du composant.
-          <PeriodNav
-            onPrevious={() => setWeekOffset((n) => n - 1)}
-            onNext={() => setWeekOffset((n) => n + 1)}
-            canGoNext={weekOffset < 0}
-          />
-          */}
-        </div>
+        <h2 className={styles.sectionTitle}>Cette semaine</h2>
+        <p className={styles.sectionSubtitle}>
+          Du {toFrenchDate(startWeek)} au {toFrenchDate(endWeek)}
+        </p>
 
         <div className={styles.grid}>
           <Card className={styles.goalCard}>

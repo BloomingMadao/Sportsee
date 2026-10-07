@@ -26,9 +26,7 @@ export async function apiRequest(path, { method = 'GET', body, token } = {}) {
   // .catch(() => null) : si la réponse n'est pas du JSON, on ne plante pas
   const data = await response.json().catch(() => null)
 
- // Un 401 ou un 500 n'est PAS une erreur pour fetch : c'est à nous de le vérifier.
-  // (La déconnexion sur 401/403 est gérée dans services/api/index.js,
-  // pour qu'elle s'applique AUSSI au mock.)
+  // Un 401 ou un 500 n'est PAS une erreur pour fetch : c'est à nous de le vérifier.
   if (!response.ok) {
     throw new ApiError(response.status, data?.message ?? 'Erreur inconnue')
   }

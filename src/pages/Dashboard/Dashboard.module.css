@@ -2,12 +2,6 @@
   margin-top: 96px;
 }
 
-.sectionHeader {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-}
-
 .sectionTitle {
   font-size: 24px;
   font-weight: 600;

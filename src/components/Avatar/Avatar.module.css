@@ -1,0 +1,21 @@
+.avatar {
+  flex-shrink: 0; /* le cadre garde sa taille même si le nom est long */
+  width: 112px;
+  height: 116px;
+  border-radius: var(--radius-md);
+  /* cover : remplit le cadre SANS déformer la photo (quitte à rogner les bords).
+     Les photos du backend sont en portrait (env. 2:3) : avec fill, elles
+     étaient écrasées pour tenir dans 112 × 116. */
+  object-fit: cover;
+}
+
+/* Repli affiché quand la photo est absente ou ne charge pas */
+.fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+  font-size: 32px;
+  font-weight: 600;
+}

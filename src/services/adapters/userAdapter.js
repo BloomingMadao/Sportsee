@@ -1,10 +1,4 @@
-import {
-  toNumber,
-  formatDuration,
-  getInitials,
-  formatHeight,
-  formatGender,
-} from './helpers'
+import { toNumber, getInitials, formatHeight, formatGender } from './helpers'
 import { formatLongDate } from './dateHelpers'
 
 // Valeur de repli si la réponse ne contient pas d'objectif hebdomadaire
@@ -48,14 +42,7 @@ export function formatUserInfo(raw) {
     statistics: {
       totalDistance, // nombre, en km
       totalSessions,
-      totalDuration, // nombre, en minutes
-      totalDurationLabel: formatDuration(totalDuration), // "12 h 45"
-
-      // Garde-fou classique : jamais de division par zéro
-      averageDistance:
-        totalSessions > 0
-          ? Number((totalDistance / totalSessions).toFixed(1))
-          : 0,
+      totalDuration, // nombre, en minutes (mis en forme par splitDuration)
     },
 
     // ?? : si weeklyGoal est absent (undefined ou null), on prend la valeur de repli

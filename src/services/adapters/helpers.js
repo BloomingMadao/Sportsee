@@ -8,21 +8,6 @@ export function toNumber(value, fallback = 0) {
 }
 
 /**
- * 765 → "12 h 45"  |  45 → "45 min"
- * @param {number} minutes
- */
-export function formatDuration(minutes) {
-  const total = toNumber(minutes)
-  const hours = Math.floor(total / 60)
-  const rest = total % 60
-
-  if (hours === 0) return `${rest} min`
-
-  // padStart : "5" devient "05", pour lire "12 h 05" et non "12 h 5"
-  return `${hours} h ${String(rest).padStart(2, '0')}`
-}
-
-/**
  * "Sophie", "Martin" → "SM"
  */
 export function getInitials(firstName = '', lastName = '') {

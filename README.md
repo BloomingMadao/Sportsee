@@ -1,16 +1,89 @@
-# React + Vite
+# SportSee – Front-end
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Tableau de bord d'analyse de course à pied : connexion, dashboard (graphiques
+des 4 dernières semaines, fréquence cardiaque, objectif hebdomadaire) et page
+profil.
 
-Currently, two official plugins are available:
+**Stack :** React 19, React Router 7, Recharts 3, Vite 8, CSS Modules.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Prérequis
 
-## React Compiler
+- Node.js `^20.19.0` ou `>=22.12.0` (exigence de Vite 8)
+- Le backend SportSee (dossier [`Sportsee_Backend`](https://github.com/BloomingMadao/Sportsee_Backend.git) ou [https://github.com/BloomingMadao/Sportsee_Backend.git](https://github.com/BloomingMadao/Sportsee_Backend.git)) si l'on veut les vraies 
+  données ; inutile en mode mock.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Installation
 
-## Expanding the ESLint configuration
+```bash
+npm install
+cp .env.exemple .env
+npm run dev
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+L'application est servie sur http://localhost:5173.
+
+## Variables d'environnement
+
+| Variable        | Rôle                                                        | Défaut                  |
+| --------------- | ----------------------------------------------------------- | ----------------------- |
+| `VITE_API_URL`  | Adresse du backend                                          | `http://localhost:8000` |
+| `VITE_USE_MOCK` | `true` = données simulées, `false` = vrai backend           | `true`                  |
+
+Vite lit le `.env` au démarrage : relancer `npm run dev` après une modification.
+
+## Comptes de démonstration
+
+Identiques en mode mock et avec le backend :
+
+| Identifiant    | Mot de passe  |
+| -------------- | ------------- |
+| `sophiemartin` | `password123` |
+| `emmaleroy`    | `password789` |
+| `marcdubois`   | `password456` |
+
+## Scripts
+
+| Commande          | Rôle                                  |
+| ----------------- | ------------------------------------- |
+| `npm run dev`     | Serveur de développement              |
+| `npm run build`   | Build de production dans `dist/`      |
+| `npm run preview` | Sert le build de production           |
+| `npm run lint`    | ESLint                                |
+
+## Architecture
+
+```
+src/
+├── config.js              lecture des variables d'environnement
+├── services/
+│   ├── api/index.js       SEUL point de bascule mock / vrai backend
+│   ├── api/realApi.js     routes du backend (via apiClient)
+│   ├── mock/              faux backend : mêmes méthodes, mêmes erreurs
+│   ├── apiClient.js       unique appel à fetch (en-têtes, jeton, codes HTTP)
+│   ├── ApiError.js        erreur qui transporte le code HTTP
+│   ├── errorMessages.js   tous les textes d'erreur
+│   └── adapters/          mise en forme des réponses pour les composants
+├── hooks/                 useUserInfo, useUserActivity, useLogin,
+│                          useApiRequest (cycle de vie commun),
+│                          useErrorRedirect (redirection vers la page d'erreur)
+├── context/               session (jeton) partagée via AuthContext
+├── components/            composants réutilisables et graphiques
+└── pages/                 Connexion, Dashboard, Profil, ErrorPage
+```
+
+### Flux d'un appel
+
+`page → hook → userService → api (mock ou réel) → adapter → composant`
+
+### Gestion des erreurs
+
+Toutes les erreurs aboutissent au même template, `pages/ErrorPage` :
+
+| Cas                                          | Comportement                                               |
+| -------------------------------------------- | ---------------------------------------------------------- |
+| URL inconnue                                 | route `*` → ErrorPage 404, lien vers le dashboard si connecté |
+| Erreur API (0, 401, 403, 404, 500…)          | `useErrorRedirect` → `/error/:status`                      |
+| Session refusée (401 / 403)                  | ErrorPage → lien « Retour à la connexion » qui ferme la session |
+| Serveur injoignable (0) / erreur serveur (500) | ErrorPage → retour à la connexion (évite une boucle d'erreurs) |
+| Composant qui plante au rendu                | `ErrorBoundary` → ErrorPage 500                            |
+| Mauvais identifiants (400 / 401 au login)    | message sous le formulaire (erreur de saisie, pas une panne) |

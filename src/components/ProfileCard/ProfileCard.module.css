@@ -1,4 +1,3 @@
-
 /* 225deg = du coin haut droit vers le coin bas gauche */
 .card {
   display: flex;
@@ -15,24 +14,6 @@
   display: flex;
   align-items: center;
   gap: 40px;
-}
-
-.avatar {
-  width: 112px;
-  height: 116px;
-  border-radius: var(--radius-md);
-  object-fit: inherit; /* remplit le cadre sans déformer */
-}
-
-/* Repli affiché quand l'image ne charge pas */
-.avatarFallback {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: var(--color-primary-light);
-  color: var(--color-primary);
-  font-size: 32px;
-  font-weight: 600;
 }
 
 .name {
@@ -57,12 +38,14 @@
   font-size: 16px;
 }
 
-.distanceImg{
-  color:var(--color-surface);
-  height: 1em;
-  width: 1.5em;
-  padding-right: 3px;
+/* Icône SVG (OUTLINE.svg), déjà blanche dans le fichier : fill="white".
+   34px = taille de l'export Figma (width="34" height="34" dans le SVG). */
+.distanceIcon {
+  flex-shrink: 0;
   align-self: center;
+  width: 34px;
+  height: 34px;
+  margin-right: 12px;
 }
 
 .distanceValue {

@@ -7,11 +7,11 @@ import { useNavigate } from 'react-router-dom'
 export const ERROR_ROUTE = '/error/:status'
 export const getErrorPath = (status) => `/error/${status}`
 
-// 401 et 403 = session absente ou expirée. Ces deux cas sont déjà gérés :
-// api/index.js prévient l'AuthProvider (sessionEvents), qui vide la session,
-// puis ProtectedRoute renvoie vers /connexion. On ne doit donc pas
-// rediriger une deuxième fois vers la page d'erreur.
-const HANDLED_BY_SESSION = [401, 403]
+// Par défaut, AUCUN code n'est ignoré : toutes les erreurs (0, 401, 403,
+// 404, 500...) mènent à la même page d'erreur. Seul le formulaire de
+// connexion en ignore certaines (400/401 = erreur de saisie, voir useLogin).
+// Constante hors du hook : un [] recréé à chaque rendu relancerait l'effet.
+const NO_IGNORED_STATUS = []
 
 /**
  * Redirige vers la page d'erreur commune dès qu'une erreur apparaît.
@@ -22,7 +22,7 @@ const HANDLED_BY_SESSION = [401, 403]
  *   (ils sont gérés ailleurs). Doit être une constante déclarée hors du
  *   composant : un tableau recréé à chaque rendu relancerait l'effet.
  */
-export function useErrorRedirect(error, { ignore = HANDLED_BY_SESSION } = {}) {
+export function useErrorRedirect(error, { ignore = NO_IGNORED_STATUS } = {}) {
   const navigate = useNavigate()
 
   useEffect(() => {

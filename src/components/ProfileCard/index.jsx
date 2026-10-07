@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import logo from '../../assets/OUTLINE.svg'
+import Avatar from '../Avatar'
+import flagIcon from '../../assets/OUTLINE.svg'
 import styles from './ProfileCard.module.css'
 
 /**
@@ -8,26 +8,10 @@ import styles from './ProfileCard.module.css'
  * @param {number} totalDistance - en km
  */
 function ProfileCard({ profile, totalDistance }) {
-  // L'image vient du backend (localhost:8000). Si le serveur est éteint
-  // ou l'URL cassée, onError bascule sur les initiales.
-  const [hasImageError, setHasImageError] = useState(false)
-  const showImage = Boolean(profile.pictureUrl) && !hasImageError
-
   return (
     <section className={styles.card}>
       <div className={styles.identity}>
-        {showImage ? (
-          <img
-            src={profile.pictureUrl}
-            alt="" // décorative : le nom est juste à côté
-            className={styles.avatar}
-            onError={() => setHasImageError(true)}
-          />
-        ) : (
-          <div className={`${styles.avatar} ${styles.avatarFallback}`}>
-            {profile.initials}
-          </div>
-        )}
+        <Avatar src={profile.pictureUrl} initials={profile.initials} />
 
         <div>
           <h1 className={styles.name}>{profile.fullName}</h1>
@@ -38,12 +22,13 @@ function ProfileCard({ profile, totalDistance }) {
           )}
         </div>
       </div>
-        
+
       <div className={styles.distance}>
-       
         <p className={styles.distanceLabel}>Distance totale parcourue</p>
         <p className={styles.distanceValue}>
-          <img className={styles.distanceImg} src={logo} />
+          {/* alt="" : icône décorative, le texte à côté porte l'information.
+              Sans attribut alt, le validateur W3C signale une erreur. */}
+          <img src={flagIcon} alt="" className={styles.distanceIcon} />
           {totalDistance}
           <span className={styles.distanceUnit}> km</span>
         </p>

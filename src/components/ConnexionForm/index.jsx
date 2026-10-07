@@ -1,24 +1,15 @@
 import { useState } from 'react'
-import { useNavigate/*, useLocation */} from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useLogin } from '../../hooks/useLogin'
 import styles from './ConnexionForm.module.css'
 
 function ConnexionForm() {
-
-
-
   // Un état par champ : c'est ce qui rend les inputs "contrôlés"
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
   const { submit, isLoading, error } = useLogin()
   const navigate = useNavigate()
-  // const location = useLocation() --> pour garder en mémoire la dernière page avant la déconnexion
-
-  // Page demandée avant la redirection, ou le dashboard par défaut
-  // const destination = location.state?.from ?? '/dashboard'
-  const destination = '/dashboard'
-
 
   async function handleSubmit(event) {
     // Sans ça, le navigateur rechargerait la page et l'application repartirait de zéro
@@ -28,7 +19,7 @@ function ConnexionForm() {
 
     // replace: true → la page de connexion est retirée de l'historique.
     // Le bouton "Précédent" ne ramène donc pas sur un formulaire devenu inutile.
-        if (success) navigate(destination, { replace: true })
+    if (success) navigate('/dashboard', { replace: true })
   }
 
   return (

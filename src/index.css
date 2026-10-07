@@ -41,8 +41,18 @@ body {
 h1,
 h2,
 h3,
-p {
+p,
+ul {
   margin: 0;
+}
+
+/* Les <ul> du projet sont des légendes et des lignes d'infos, pas des listes
+   à puces. Sans ce reset, le navigateur leur ajoute 40px de retrait à gauche :
+   les infos de « Votre profil » étaient décalées par rapport au titre et la
+   légende du donut n'était plus centrée sous l'anneau. */
+ul {
+  padding: 0;
+  list-style: none;
 }
 
 /* Par défaut, les champs et boutons n'héritent pas de la police de la page */

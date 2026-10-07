@@ -9,7 +9,7 @@ import styles from './ErrorPage.module.css'
  *
  * Le code d'erreur peut arriver de deux façons :
  * - par une prop  : <ErrorPage status={404} /> (route "*", ErrorBoundary)
- * - par l'URL     : /error/500 (redirection faite par useErrorRedirect)
+ * - par l'URL     : /error/403, /error/500... (redirection faite par useErrorRedirect)
  *
  * @param {number} [status]
  * @param {string} [message] - remplace le message associé au code
@@ -27,10 +27,11 @@ function ErrorPage({ status, message }) {
   // Où renvoyer l'utilisateur ?
   // - 404 en étant connecté : seule l'URL est fausse, l'API fonctionne,
   //   le tableau de bord s'affichera normalement.
-  // - Toute autre erreur (0 = serveur injoignable, 500...) : le tableau de bord
-  //   referait les mêmes appels, échouerait et renverrait ici, en boucle.
-  //   On ferme donc la session et on renvoie vers la connexion. Sans logout(),
-  //   la page Connexion verrait une session ouverte et renverrait vers /dashboard.
+  // - 401 / 403 : le serveur refuse la session (jeton absent, invalide, expiré).
+  // - 0 (serveur injoignable), 500... : le tableau de bord referait les mêmes
+  //   appels, échouerait et renverrait ici, en boucle.
+  // Dans ces cas, on ferme la session et on renvoie vers la connexion. Sans
+  // logout(), la page Connexion verrait une session ouverte et renverrait vers /dashboard.
   const canReturnToDashboard = isAuthenticated && code === 404
   const target = canReturnToDashboard ? '/dashboard' : '/connexion'
   const label = canReturnToDashboard ? 'Retour au tableau de bord' : 'Retour à la connexion'
