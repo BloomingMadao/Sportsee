@@ -138,7 +138,6 @@ function Dashboard() {
               color="#B6BDFC"
               height={240}
               barSize={16}
-              radius={[8, 8, 8, 8]}
             />
           </ChartCard>
 

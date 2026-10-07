@@ -1,27 +1,34 @@
 import { useState } from 'react'
+import { useNavigate/*, useLocation */} from 'react-router-dom'
 import { useLogin } from '../../hooks/useLogin'
-import { useAuth } from '../../context/AuthContext'
-import { SESSION_EXPIRED_MESSAGE } from '../../services/errorMessages'
 import styles from './ConnexionForm.module.css'
 
 function ConnexionForm() {
+
+
+
   // Un état par champ : c'est ce qui rend les inputs "contrôlés"
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
   const { submit, isLoading, error } = useLogin()
-  const { isSessionExpired } = useAuth()
+  const navigate = useNavigate()
+  // const location = useLocation() --> pour garder en mémoire la dernière page avant la déconnexion
 
-  // Priorité à l'erreur de saisie ; sinon, on explique une éventuelle expiration
-  const message = error ?? (isSessionExpired ? SESSION_EXPIRED_MESSAGE : null)
+  // Page demandée avant la redirection, ou le dashboard par défaut
+  // const destination = location.state?.from ?? '/dashboard'
+  const destination = '/dashboard'
 
-  function handleSubmit(event) {
+
+  async function handleSubmit(event) {
     // Sans ça, le navigateur rechargerait la page et l'application repartirait de zéro
     event.preventDefault()
 
-    // Pas de navigate() ici : en cas de succès, la session est enregistrée
-    // dans le contexte, et la page Connexion redirige d'elle-même.
-    submit(username, password)
+    const success = await submit(username, password)
+
+    // replace: true → la page de connexion est retirée de l'historique.
+    // Le bouton "Précédent" ne ramène donc pas sur un formulaire devenu inutile.
+        if (success) navigate(destination, { replace: true })
   }
 
   return (
@@ -64,9 +71,9 @@ function ConnexionForm() {
       </div>
 
       {/* role="alert" : les lecteurs d'écran annoncent le message dès son apparition */}
-      {message && (
+      {error && (
         <p className={styles.error} role="alert">
-          {message}
+          {error}
         </p>
       )}
 

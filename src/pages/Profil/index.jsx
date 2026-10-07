@@ -1,14 +1,14 @@
-import { useState, useMemo } from 'react'
+import { useMemo } from 'react'
 import { useUserInfo } from '../../hooks/useUserInfo'
 import { useUserActivity } from '../../hooks/useUserActivity'
+import { useErrorRedirect } from '../../hooks/useErrorRedirect'
 import { toISODate } from '../../services/adapters/dateHelpers'
 import { summarizeHistory } from '../../services/adapters/activityAdapter'
 import { splitDuration } from '../../services/adapters/helpers'
 import Card from '../../components/Card'
+import Avatar from '../../components/Avatar'
 import StatTile from '../../components/StatTile'
-import { useErrorRedirect } from '../../hooks/useErrorRedirect'
 import styles from './Profil.module.css'
-
 
 /** Une ligne « Libellé : valeur » de la carte profil */
 function InfoRow({ label, value }) {
@@ -21,7 +21,6 @@ function InfoRow({ label, value }) {
 
 function Profil() {
   const { data: user, isLoading, error } = useUserInfo()
-  const [hasImageError, setHasImageError] = useState(false)
 
   // --- Historique complet ---------------------------------------------
   // TOUS les hooks doivent être appelés avant les retours anticipés :
@@ -32,7 +31,7 @@ function Profil() {
     return { start: user.profile.memberSince, end: toISODate(new Date()) }
   }, [user])
 
-   // Le hook ne lance aucune requête tant que les bornes valent null
+  // Le hook ne lance aucune requête tant que les bornes valent null
   const { sessions: allSessions, error: historyError } = useUserActivity(
     historyRange.start,
     historyRange.end
@@ -49,25 +48,13 @@ function Profil() {
   if (!user) return null
 
   const { profile } = user
-  const showImage = Boolean(profile.pictureUrl) && !hasImageError
   const duration = splitDuration(user.statistics.totalDuration)
 
   return (
     <div className={styles.grid}>
       <div className={styles.column}>
         <Card className={styles.identityCard}>
-          {showImage ? (
-            <img
-              src={profile.pictureUrl}
-              alt=""
-              className={styles.avatar}
-              onError={() => setHasImageError(true)}
-            />
-          ) : (
-            <div className={`${styles.avatar} ${styles.avatarFallback}`}>
-              {profile.initials}
-            </div>
-          )}
+          <Avatar src={profile.pictureUrl} initials={profile.initials} />
 
           <div>
             <h1 className={styles.name}>{profile.fullName}</h1>
@@ -93,12 +80,16 @@ function Profil() {
       </div>
 
       <div className={styles.column}>
-        <h2 className={styles.statsTitle}>Vos statistiques</h2>
-        {profile.memberSinceLabel && (
-          <p className={styles.statsSubtitle}>
-            depuis le {profile.memberSinceLabel}
-          </p>
-        )}
+        {/* Titre et sous-titre groupés : l'écart de la colonne (28px)
+            ne doit pas s'appliquer entre les deux */}
+        <div>
+          <h2 className={styles.statsTitle}>Vos statistiques</h2>
+          {profile.memberSinceLabel && (
+            <p className={styles.statsSubtitle}>
+              depuis le {profile.memberSinceLabel}
+            </p>
+          )}
+        </div>
 
         <div className={styles.tiles}>
           <StatTile

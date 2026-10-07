@@ -19,23 +19,6 @@
   padding: 24px 32px;
 }
 
-.avatar {
-  width: 112px;
-  height: 116px;
-  border-radius: var(--radius-md);
-  object-fit: fill;
-}
-
-.avatarFallback {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: var(--color-primary-light);
-  color: var(--color-primary);
-  font-size: 32px;
-  font-weight: 600;
-}
-
 .name {
   font-size: 26px;
   font-weight: 600;

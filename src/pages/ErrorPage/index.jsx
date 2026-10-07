@@ -22,19 +22,31 @@ function ErrorPage({ status, message }) {
   // est « faux » en JavaScript et deviendrait 500.
   const fromUrl = Number(params.status)
   const code = status ?? (Number.isNaN(fromUrl) ? 500 : fromUrl)
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, logout } = useAuth()
+
+  // Où renvoyer l'utilisateur ?
+  // - 404 en étant connecté : seule l'URL est fausse, l'API fonctionne,
+  //   le tableau de bord s'affichera normalement.
+  // - Toute autre erreur (0 = serveur injoignable, 500...) : le tableau de bord
+  //   referait les mêmes appels, échouerait et renverrait ici, en boucle.
+  //   On ferme donc la session et on renvoie vers la connexion. Sans logout(),
+  //   la page Connexion verrait une session ouverte et renverrait vers /dashboard.
+  const canReturnToDashboard = isAuthenticated && code === 404
+  const target = canReturnToDashboard ? '/dashboard' : '/connexion'
+  const label = canReturnToDashboard ? 'Retour au tableau de bord' : 'Retour à la connexion'
+  const handleClick = canReturnToDashboard ? undefined : logout
 
   return (
     <main className={styles.page}>
-      <Link to="/dashboard" className={styles.logo}>
+      {/* Le logo mène au même endroit que le lien, sinon il relancerait la boucle */}
+      <Link to={target} onClick={handleClick} className={styles.logo}>
         <Logo />
       </Link>
 
       <div className={styles.info}>
         <ErrorMessage status={code} message={message}>
-          {/* Connecté : retour au dashboard. Sinon : retour à la connexion. */}
-          <Link to={isAuthenticated ? '/dashboard' : '/connexion'} className={styles.link}>
-            {isAuthenticated ? 'Retour au tableau de bord' : 'Retour à la connexion'}
+          <Link to={target} onClick={handleClick} className={styles.link}>
+            {label}
           </Link>
         </ErrorMessage>
       </div>
