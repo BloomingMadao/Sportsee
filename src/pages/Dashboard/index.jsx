@@ -111,8 +111,8 @@ function Dashboard() {
 
         <div className={styles.grid}>
           <ChartCard
-            title={`${averagePerWeek} km en moyenne`}
-            subtitle="Total des kilomètres des 4 dernières semaines"
+            title={`${averagePerWeek}km en moyenne`}
+            subtitle="Total des kilomètres 4 dernières semaines"
             nav={{
               label: `${formatDayMonth(startBlock)} - ${formatDayMonth(endBlock)}`,
               onPrevious: () => setBlockOffset((n) => n - 1),
@@ -123,11 +123,8 @@ function Dashboard() {
             <WeeklyBarChart
               data={weeklyTotals}
               dataKey="distance"
-              label="Distance"
               unit="km"
-              color="#B6BDFC"
-              height={240}
-              barSize={16}
+              legend="Km"
             />
           </ChartCard>
 
@@ -142,7 +139,7 @@ function Dashboard() {
               canGoNext: bpmOffset < 0,
             }}
           >
-            <HeartRateChart data={bpmSeries} height={240} />
+            <HeartRateChart data={bpmSeries} />
           </ChartCard>
         </div>
       </section>

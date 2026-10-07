@@ -1,0 +1,39 @@
+.legend {
+  display: flex;
+  gap: 20px;
+  margin-top: 16px;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--color-text-muted);
+  font-size: 12px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+/* Trait + point central, comme dans la maquette.
+   Le point (::after) reprend la couleur du trait grâce à "inherit". */
+.line {
+  position: relative;
+  width: 12px;
+  height: 1px;
+}
+
+.line::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: inherit;
+  transform: translate(-50%, -50%);
+}

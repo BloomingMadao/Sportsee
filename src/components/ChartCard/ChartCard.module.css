@@ -1,17 +1,23 @@
+/* Marges intérieures relevées dans la maquette : 24px en haut et en bas,
+   40px à gauche et à droite */
 .card {
-  padding: 24px;
+  padding: 24px 40px;
 }
 
+/* flex-wrap : si la place manque, les flèches passent sous le titre
+   au lieu de couper le titre en deux */
 .header {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 8px 16px;
 }
 
 .title {
   font-size: 22px;
-  font-weight: 700;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 .primary {
@@ -22,9 +28,11 @@
   color: var(--color-accent);
 }
 
+/* margin-bottom 32px + marge haute du graphique 8px = 40px entre le
+   sous-titre et le haut de la zone de tracé, comme dans la maquette */
 .subtitle {
-  margin-top: 4px;
-  margin-bottom: 16px;
+  margin-top: 10px;
+  margin-bottom: 32px;
   color: var(--color-text-muted);
-  font-size: 14px;
+  font-size: 12px;
 }

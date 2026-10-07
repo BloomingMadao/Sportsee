@@ -75,14 +75,27 @@ export function getWeeksRange(weekCount = 4, blockOffset = 0, reference = new Da
   return { startWeek, endWeek }
 }
 
-/** '2026-05-28' → '28 mai' */
+/**
+ * '2026-05-28' → '28 mai' | '2026-06-04' → '04 juin' | '2026-09-14' → '14 sept.'
+ * Format court des flèches de période, comme dans la maquette
+ * (« 28 mai - 04 juin ») : jour sur deux chiffres, mois abrégé.
+ * L'abréviation ne change rien pour mai ou juin, mais évite que
+ * « 14 septembre - 11 octobre » fasse passer le titre de la carte sur deux lignes.
+ */
 export function formatDayMonth(iso) {
   if (!iso) return ''
 
   const date = fromISODate(iso)
-  const month = date.toLocaleDateString('fr-FR', { month: 'long' })
-  const day = date.getDate()
+  const month = date.toLocaleDateString('fr-FR', { month: 'short' })
 
-  return `${day === 1 ? '1er' : day} ${month}`
+  return `${pad(date.getDate())} ${month}`
 }
 
+/** '2026-06-01' → '01.06' (infobulle du graphique des kilomètres) */
+export function formatShortDate(iso) {
+  if (!iso) return ''
+
+  // Pas besoin de passer par Date : 'AAAA-MM-JJ' se découpe directement
+  const [, month, day] = iso.split('-')
+  return `${day}.${month}`
+}

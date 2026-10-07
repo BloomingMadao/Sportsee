@@ -1,22 +1,44 @@
-.legend {
-  display: flex;
-  justify-content: center;
-  gap: 32px;
-  margin-top: 8px;
-  list-style: none;
+/* Une ligne en trois colonnes : légende | donut | légende.
+   1fr auto 1fr : les deux colonnes de côté ont la même largeur, donc le
+   donut reste parfaitement centré même si les deux textes n'ont pas la
+   même longueur (« 4 réalisées » / « 2 restantes »). */
+.chart {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  column-gap: 12px;
+  margin-top: 60px;
 }
 
-.legendItem {
+/* Le donut toujours dans la colonne du milieu, même sans légendes
+   (cas de l'anneau vide) */
+.donut {
+  grid-column: 2;
+}
+
+.label {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
   color: var(--color-text-muted);
-  font-size: 13px;
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+/* Chaque légende se colle au donut */
+.labelCompleted {
+  grid-column: 1;
+  justify-self: end;
+}
+
+.labelRemaining {
+  grid-column: 3;
+  justify-self: start;
 }
 
 .dot {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
 }
 

@@ -11,7 +11,7 @@ function StatTile({ label, value, unit }) {
     <div className={styles.tile}>
       <p className={styles.label}>{label}</p>
       <p className={styles.value}>
-        {value}
+        {value.toLocaleString('fr-FR')}
         <span className={styles.unit}> {unit}</span>
       </p>
     </div>

@@ -23,25 +23,29 @@
   align-items: start;
 }
 
+/* Marges relevées dans la maquette */
 .goalCard {
-  padding: 32px;
+  padding: 24px 40px 44px;
 }
 
+/* « x4 » en grand et en gras… */
 .goalTitle {
-  font-size: 28px;
+  font-size: 26px;
   font-weight: 700;
   color: var(--color-primary);
 }
 
-/* La seconde moitié du titre, en bleu clair comme sur la maquette */
+/* …« sur objectif de 6 » plus petit, moins gras et en bleu clair */
 .goalTarget {
   color: var(--color-primary-light);
+  font-size: 16px;
+  font-weight: 500;
 }
 
 .goalSubtitle {
   margin-top: 8px;
   color: var(--color-text-muted);
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .statColumn {

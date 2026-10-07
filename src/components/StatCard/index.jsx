@@ -12,7 +12,7 @@ function StatCard({ label, value, unit, variant = 'primary' }) {
     <div className={styles.card}>
       <p className={styles.label}>{label}</p>
       <p className={`${styles.value} ${styles[variant]}`}>
-        {value}
+        {value.toLocaleString('fr-FR')}
         <span className={styles.unit}> {unit}</span>
       </p>
     </div>

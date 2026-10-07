@@ -1,21 +1,20 @@
-.legend {
-  display: flex;
-  gap: 24px;
-  margin-top: 8px;
-  padding-left: 8px;
-  list-style: none;
+/* Animation de la maquette : la courbe de la moyenne passe du lavande au
+   bleu foncé quand la souris entre dans le graphique.
+   Même principe que WeeklyBarChart : .averageLine est passée à <Line> par sa
+   prop className ; une règle CSS "stroke" l'emporte sur l'attribut écrit par
+   Recharts, et "transition" anime le changement.
+   (Les points sont des <circle>, ils ne sont donc pas concernés.) */
+.averageLine path {
+  transition: stroke 0.3s ease;
 }
 
-.legendItem {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--color-text-muted);
-  font-size: 13px;
+.chart:hover .averageLine path,
+.chart:focus-within .averageLine path {
+  stroke: var(--color-primary);
 }
 
-.dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
+@media (prefers-reduced-motion: reduce) {
+  .averageLine path {
+    transition: none;
+  }
 }

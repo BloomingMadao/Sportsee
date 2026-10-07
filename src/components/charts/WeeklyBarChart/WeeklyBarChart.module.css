@@ -1,0 +1,23 @@
+/* Animation de la maquette : les barres passent du bleu clair au bleu foncé
+   quand la souris entre dans le graphique.
+
+   Recharts dessine chaque barre avec un <path fill="#B6BDFC">, à l'intérieur
+   du groupe qui reçoit notre classe .bars (prop className de <Bar>).
+   Une règle CSS "fill" l'emporte sur l'attribut : il suffit donc de changer
+   la couleur au survol, et "transition" anime le passage d'une couleur à l'autre. */
+.bars path {
+  transition: fill 0.3s ease;
+}
+
+/* :focus-within : même effet quand on arrive sur le graphique au clavier */
+.chart:hover .bars path,
+.chart:focus-within .bars path {
+  fill: var(--color-primary);
+}
+
+/* Respecte le réglage « réduire les animations » du système */
+@media (prefers-reduced-motion: reduce) {
+  .bars path {
+    transition: none;
+  }
+}

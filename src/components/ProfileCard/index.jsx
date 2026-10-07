@@ -29,7 +29,7 @@ function ProfileCard({ profile, totalDistance }) {
           {/* alt="" : icône décorative, le texte à côté porte l'information.
               Sans attribut alt, le validateur W3C signale une erreur. */}
           <img src={flagIcon} alt="" className={styles.distanceIcon} />
-          {totalDistance}
+          {totalDistance.toLocaleString('fr-FR')}
           <span className={styles.distanceUnit}> km</span>
         </p>
       </div>
