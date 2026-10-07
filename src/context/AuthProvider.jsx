@@ -8,7 +8,14 @@ const STORAGE_KEY = 'sportsee.auth'
 function readStoredAuth() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
-    return raw ? JSON.parse(raw) : null
+    const stored = raw ? JSON.parse(raw) : null
+
+    // Une session n'est valable que si elle contient un jeton.
+    // Sans cette vérification, une valeur comme {} (ancienne version de
+    // l'app, modification à la main…) passait pour une session ouverte :
+    // le dashboard attendait alors un jeton qui n'arrivait jamais → page blanche.
+    const hasToken = typeof stored?.token === 'string' && stored.token !== ''
+    return hasToken ? stored : null
   } catch {
     // Si la valeur stockée est corrompue, on repart d'une session vide plutôt que de planter.
     return null
@@ -38,7 +45,8 @@ function AuthProvider({ children }) {
   const value = {
     token: auth?.token ?? null,
     userId: auth?.userId ?? null,
-    isAuthenticated: auth !== null,
+    // Connecté = on possède un jeton (et pas seulement un objet "auth")
+    isAuthenticated: Boolean(auth?.token),
     login,
     logout,
   }
